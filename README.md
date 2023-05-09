@@ -1,2 +1,2 @@
-# azure-iot-terraform
-Holds terraform code for Azure IoT implementations
+# azure-iac
+Azure Infrastructure as Code repo
