@@ -146,5 +146,3 @@ resource planNetworkConfig 'Microsoft.Web/sites/networkConfig@2022-03-01' = {
     swiftSupported: true
   }
 }
-
-output functionIdentityPrincipalId string = function.identity.principalId
