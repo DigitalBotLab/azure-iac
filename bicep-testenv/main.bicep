@@ -22,6 +22,16 @@ param eventHubsNamespaceTier string = 'Basic'
 @description('Event Hubs throughput units')
 param eventHubsNamespaceCapacity int = 1
 
+@description('Virtual Network Address Prefix')
+param vnetAddressPrefix string = '10.0.0.0/22'
+
+@description('Function Subnet Address Prefix')
+param functionAddressPrefix string = '10.0.0.0/24'
+
+@description('Private Link Subnet Address Prefix')
+param privateLinkAddressPrefix string = '10.0.1.0/24'
+
+
 @allowed([
   'Dev(No SLA)_Standard_D11_v2'
   'Standard_D11_v2'
@@ -83,10 +93,16 @@ var unique = substring(uniqueString(resourceGroup().id), 0, 4)
 
 var adxClusterName = 'adx${unique}'
 var digitalTwinsName = 'digitalTwins-${unique}'
-var eventHubsNamespaceName = 'eventHubsNamespace-${unique}'
+var eventHubsNamespaceName = 'evthubns-${unique}'
 var eventHubName = 'eventHub-${unique}'
 var databaseName = 'database-${unique}'
 var databaseTableName = 'databaseTable-${unique}'
+
+var functionName = 'dtFunc-${unique}'
+var virtualNetworkName = 'vnet-${unique}'
+
+var privateLinkSubnetName = 'PrivateLinkSubnet'
+var functionSubnetName = 'FunctionSubnet'
 
 // Creates Digital Twins resource
 module digitalTwins 'modules/digitaltwins.bicep' = {
@@ -94,6 +110,59 @@ module digitalTwins 'modules/digitaltwins.bicep' = {
   params: {
     digitalTwinsName: digitalTwinsName
     location: location
+  }
+}
+
+
+module network 'modules/network.bicep' = {
+  name: 'network'
+  params: {
+    virtualNetworkName: virtualNetworkName
+    virtualNetworkLocation: location
+    virtualNetworkAddressPrefix: vnetAddressPrefix
+    functionSubnetName: functionSubnetName
+    functionSubnetPrefix: functionAddressPrefix
+    privateLinkSubnetName: privateLinkSubnetName
+    privateLinkSubnetPrefix: privateLinkAddressPrefix
+  }
+}
+
+
+module privatelink 'modules/privatelink.bicep' = {
+  name: 'privatelink'
+  params: {
+    privateLinkName: 'PrivateLinkToDigitalTwins'
+    location: location
+    privateLinkServiceResourceId: digitalTwins.outputs.id
+    groupId: 'API'
+    privateLinkSubnetName: privateLinkSubnetName
+    privateDnsZoneName: 'privatelink.digitaltwins.azure.net'
+    virtualNetworkResourceName: virtualNetworkName
+  }
+}
+
+
+module function 'modules/function.bicep' = {
+  name: 'function'
+  params: {
+    location: location
+    virtualNetworkName: virtualNetworkName
+    storageAccountName: '${uniqueString(resourceGroup().id)}stg'
+    functionAppName: functionName
+    serverFarmName: functionName
+    functionsSubnetName: functionSubnetName
+    applicationInsightsName: '${functionName}ai'
+    digitalTwinsEndpoint: digitalTwins.outputs.endpoint
+  }
+}
+
+
+module funcroleassignment 'modules/funcroleassignement.bicep' = {
+  name: 'funcRoleassignment'
+  params: {
+    principalId: function.outputs.functionIdentityPrincipalId
+    roleId: 'bcd981a7-7f74-457b-83e1-cceb9e632ffe'
+    digitalTwinsInstanceName: digitalTwinsName
   }
 }
 
@@ -165,3 +234,5 @@ module tsdbConnection 'modules/tsdbconnection.bicep' = {
     roleAssignment
   ]
 }
+
+
