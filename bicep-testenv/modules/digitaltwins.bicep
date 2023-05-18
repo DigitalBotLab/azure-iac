@@ -44,5 +44,3 @@ resource digitalTwins 'Microsoft.DigitalTwins/digitalTwinsInstances@2022-10-31' 
 
 output id string = digitalTwins.id
 output endpoint string = digitalTwins.properties.hostName
-output digitalTwinsIdentityPrincipalId string = digitalTwins.identity.principalId
-output digitalTwinsIdentityTenantId string = digitalTwins.identity.tenantId

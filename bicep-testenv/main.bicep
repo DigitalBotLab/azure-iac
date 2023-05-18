@@ -73,6 +73,11 @@ param principalId string
 @description('The type of the given principal id')
 param principalType string
 
+@description('The id of the AAD Tenant')
+param tenantId string
+
+
+
 @allowed([
   'westcentralus'
   'westus2'
@@ -311,15 +316,15 @@ module dataExplorerCluster 'modules/dataexplorercluster.bicep' = {
   }
 }
 
-// Assigns roles to resources
+//Assigns roles to resources
 module roleAssignment 'modules/roleassignment.bicep' = {
   name: 'roleAssignment'
   params: {
     principalId: principalId
     principalType: principalType
     digitalTwinsName: digitalTwinsName
-    digitalTwinsIdentityPrincipalId: digitalTwins.outputs.digitalTwinsIdentityPrincipalId
-    digitalTwinsIdentityTenantId: digitalTwins.outputs.digitalTwinsIdentityTenantId
+    digitalTwinsIdentityPrincipalId: uami.properties.principalId
+    digitalTwinsIdentityTenantId: tenantId
     eventHubsNamespaceName: eventHubsNamespaceName
     eventHubName: eventHubName
     adxClusterName: adxClusterName
