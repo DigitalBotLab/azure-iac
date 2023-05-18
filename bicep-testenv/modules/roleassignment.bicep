@@ -29,6 +29,7 @@ param principalType string
 var azureRbacContributor = 'b24988ac-6180-42a0-ab88-20f7382dd24c'
 var azureRbacAzureEventHubsDataOwner = 'f526a384-b230-433a-b45c-95f59c4a2dec'
 var azureRbacAzureDigitalTwinsDataOwner = 'bcd981a7-7f74-457b-83e1-cceb9e632ffe'
+var azureRbacAzureDigitalTwinsDataReader = 'd57506d4-4c8d-48b1-8587-93c323f6a5a3'
 
 // Gets Digital Twins resource
 resource digitalTwins 'Microsoft.DigitalTwins/digitalTwinsInstances@2022-10-31' existing = {
