@@ -34,14 +34,8 @@ param applicationInsightsName string
 ])
 param functionAppPlanSku string = 'EP1'
 
-
-resource storageaccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
+resource storageaccount 'Microsoft.Storage/storageAccounts@2022-09-01' existing = {
   name: storageAccountName
-  location: location
-  kind: 'StorageV2'
-  sku: {
-    name: 'Standard_LRS'
-  }
 }
 
 resource serverfarm 'Microsoft.Web/serverfarms@2022-03-01' = {
@@ -71,9 +65,6 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
     publicNetworkAccessForQuery: 'Enabled'
     WorkspaceResourceId: logAnalyticsWorkspace.id
   }
-  dependsOn: [
-    logAnalyticsWorkspace
-  ]
 }
 
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-03-01-preview' = {

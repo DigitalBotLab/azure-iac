@@ -114,7 +114,7 @@ var privateLinkSubnetName = 'PrivateLinkSubnet'
 var functionSubnetName = 'FunctionSubnet'
 
 var iotHubName = 'iotHub${unique}'
-var storageAccountName = 'stg${unique}'
+var storageAccountName = 'stg${uniqueString(resourceGroup().id)}'
 var storageEndpoint = '${unique}StorageEndpont'
 var storageContainerName = 'results'
 
@@ -249,7 +249,7 @@ module function 'modules/function.bicep' = {
   params: {
     location: location
     virtualNetworkName: virtualNetworkName
-    storageAccountName: '${uniqueString(resourceGroup().id)}stg'
+    storageAccountName: storageAccountName
     functionAppName: functionName
     serverFarmName: functionName
     functionsSubnetName: functionSubnetName
