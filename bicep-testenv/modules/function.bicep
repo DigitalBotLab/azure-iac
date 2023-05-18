@@ -14,6 +14,9 @@ param functionAppName string
 @description('Name of the server farm')
 param serverFarmName string
 
+@description('Name of the LAW workspace')
+param logAnalyticsName string
+
 @description('Name of the subnet to connect the function to')
 param functionsSubnetName string
 
@@ -57,14 +60,36 @@ resource serverfarm 'Microsoft.Web/serverfarms@2022-03-01' = {
   }
 }
 
-resource appinsights 'Microsoft.Insights/components@2020-02-02' = {
+
+resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
   name: applicationInsightsName
   location: location
   kind: 'web'
   properties: {
     Application_Type: 'web'
+    publicNetworkAccessForIngestion: 'Enabled'
+    publicNetworkAccessForQuery: 'Enabled'
+    WorkspaceResourceId: logAnalyticsWorkspace.id
   }
+  dependsOn: [
+    logAnalyticsWorkspace
+  ]
 }
+
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-03-01-preview' = {
+  name: logAnalyticsName
+  location: location
+  properties: any({
+    retentionInDays: 30
+    features: {
+      searchVersion: 1
+    }
+    sku: {
+      name: 'PerGB2018'
+    }
+  })
+}
+
 
 resource function 'Microsoft.Web/sites@2022-03-01' = {
   name: functionAppName
@@ -91,7 +116,7 @@ resource function 'Microsoft.Web/sites@2022-03-01' = {
         }
         {
           name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: reference('${appinsights.id}', '2020-02-02').InstrumentationKey
+          value: reference('${appInsights.id}', '2020-02-02').InstrumentationKey
         }
         {
           name: 'FUNCTIONS_WORKER_RUNTIME'

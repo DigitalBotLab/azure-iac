@@ -106,7 +106,7 @@ var eventHubsNamespaceName = 'evthubns-${unique}'
 var eventHubName = 'eventHub-${unique}'
 var databaseName = 'database-${unique}'
 var databaseTableName = 'databaseTable-${unique}'
-
+var logAnalyticsName = 'law-${unique}'
 var functionName = 'dtFunc-${unique}'
 var virtualNetworkName = 'vnet-${unique}'
 
@@ -255,6 +255,7 @@ module function 'modules/function.bicep' = {
     functionsSubnetName: functionSubnetName
     applicationInsightsName: '${functionName}ai'
     digitalTwinsEndpoint: digitalTwins.outputs.endpoint
+    logAnalyticsName: logAnalyticsName
   }
 }
 
