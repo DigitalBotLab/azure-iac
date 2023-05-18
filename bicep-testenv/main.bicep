@@ -89,6 +89,15 @@ param principalType string
 @description('Location of to be created resources')
 param location string
 
+@description('The SKU to use for the IoT Hub.')
+param skuName string = 'S1'
+
+@description('The number of IoT Hub units.')
+param skuUnits int = 1
+
+@description('Partitions used for the event stream.')
+param d2cPartitions int = 4
+
 var unique = substring(uniqueString(resourceGroup().id), 0, 4)
 
 var adxClusterName = 'adx${unique}'
@@ -103,6 +112,99 @@ var virtualNetworkName = 'vnet-${unique}'
 
 var privateLinkSubnetName = 'PrivateLinkSubnet'
 var functionSubnetName = 'FunctionSubnet'
+
+var iotHubName = 'iotHub${unique}'
+var storageAccountName = 'stg${unique}'
+var storageEndpoint = '${unique}StorageEndpont'
+var storageContainerName = 'results'
+
+resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
+  name: storageAccountName
+  location: location
+  sku: {
+    name: 'Standard_LRS'
+  }
+  kind: 'Storage'
+}
+
+resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-08-01' = {
+  name: '${storageAccountName}/default/${storageContainerName}'
+  properties: {
+    publicAccess: 'None'
+  }
+  dependsOn: [
+    storageAccount
+  ]
+}
+
+resource IoTHub 'Microsoft.Devices/IotHubs@2021-07-02' = {
+  name: iotHubName
+  location: location
+  sku: {
+    name: skuName
+    capacity: skuUnits
+  }
+  properties: {
+    eventHubEndpoints: {
+      events: {
+        retentionTimeInDays: 1
+        partitionCount: d2cPartitions
+      }
+    }
+    routing: {
+      endpoints: {
+        storageContainers: [
+          {
+            connectionString: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
+            containerName: storageContainerName
+            fileNameFormat: '{iothub}/{partition}/{YYYY}/{MM}/{DD}/{HH}/{mm}'
+            batchFrequencyInSeconds: 100
+            maxChunkSizeInBytes: 104857600
+            encoding: 'JSON'
+            name: storageEndpoint
+          }
+        ]
+      }
+      routes: [
+        {
+          name: 'StorageRoute'
+          source: 'DeviceMessages'
+          condition: 'level="storage"'
+          endpointNames: [
+            storageEndpoint
+          ]
+          isEnabled: true
+        }
+      ]
+      fallbackRoute: {
+        name: '$fallback'
+        source: 'DeviceMessages'
+        condition: 'true'
+        endpointNames: [
+          'events'
+        ]
+        isEnabled: true
+      }
+    }
+    messagingEndpoints: {
+      fileNotifications: {
+        lockDurationAsIso8601: 'PT1M'
+        ttlAsIso8601: 'PT1H'
+        maxDeliveryCount: 10
+      }
+    }
+    enableFileUploadNotifications: false
+    cloudToDevice: {
+      maxDeliveryCount: 10
+      defaultTtlAsIso8601: 'PT1H'
+      feedback: {
+        lockDurationAsIso8601: 'PT1M'
+        ttlAsIso8601: 'PT1H'
+        maxDeliveryCount: 10
+      }
+    }
+  }
+}
 
 // Creates Digital Twins resource
 module digitalTwins 'modules/digitaltwins.bicep' = {
