@@ -79,12 +79,14 @@ param principalType string
 @description('Location of to be created resources')
 param location string
 
-var adxClusterName = 'adx${uniqueString(resourceGroup().id)}'
-var digitalTwinsName = 'digitalTwins-${uniqueString(resourceGroup().id)}'
-var eventHubsNamespaceName = 'eventHubsNamespace-${uniqueString(resourceGroup().id)}'
-var eventHubName = 'eventHub-${uniqueString(resourceGroup().id)}'
-var databaseName = 'database-${uniqueString(resourceGroup().id)}'
-var databaseTableName = 'databaseTable-${uniqueString(resourceGroup().id)}'
+var unique = substring(uniqueString(resourceGroup().id), 0, 4)
+
+var adxClusterName = 'adx${unique}'
+var digitalTwinsName = 'digitalTwins-${unique}'
+var eventHubsNamespaceName = 'eventHubsNamespace-${unique}'
+var eventHubName = 'eventHub-${unique}'
+var databaseName = 'database-${unique}'
+var databaseTableName = 'databaseTable-${unique}'
 
 // Creates Digital Twins resource
 module digitalTwins 'modules/digitaltwins.bicep' = {
