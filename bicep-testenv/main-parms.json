@@ -44,6 +44,9 @@
     "principalType": {
       "value": null
     },
+    "tenantId": {
+      "value": null
+    },
     "location": {
       "value": null
     }
