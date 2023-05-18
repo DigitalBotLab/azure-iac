@@ -17,12 +17,28 @@ param digitalTwinsName string
 @description('Location of to be created resource')
 param location string
 
+
+@description('User Managed Identity Name to use')
+param managedIdentityName string
+
+@description('User Managed Identity Resource Group')
+param managedIdentityGroup string
+
+// get user assigned managed identity
+resource uami 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' existing = {
+  name: managedIdentityName
+  scope: resourceGroup(managedIdentityGroup)
+}
+
 // Creates Digital Twins instance
 resource digitalTwins 'Microsoft.DigitalTwins/digitalTwinsInstances@2022-10-31' = {
   name: digitalTwinsName
   location: location
   identity: {
-    type: 'SystemAssigned'
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${uami.id}': {}
+    }
   }
 }
 

@@ -117,6 +117,14 @@ var iotHubName = 'iotHub${unique}'
 var storageAccountName = 'stg${uniqueString(resourceGroup().id)}'
 var storageEndpoint = '${unique}StorageEndpont'
 var storageContainerName = 'results'
+var uaminame = 'uai-${unique}'
+
+
+// create user assigned managed identity
+resource uami 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
+  name: uaminame
+  location: location
+}
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
   name: storageAccountName
@@ -212,6 +220,8 @@ module digitalTwins 'modules/digitaltwins.bicep' = {
   params: {
     digitalTwinsName: digitalTwinsName
     location: location
+    managedIdentityName : uaminame
+    managedIdentityGroup: resourceGroup().name    
   }
 }
 
@@ -252,10 +262,12 @@ module function 'modules/function.bicep' = {
     storageAccountName: storageAccountName
     functionAppName: functionName
     serverFarmName: functionName
-    functionsSubnetName: functionSubnetName
-    applicationInsightsName: '${functionName}ai'
-    digitalTwinsEndpoint: digitalTwins.outputs.endpoint
     logAnalyticsName: logAnalyticsName
+    functionsSubnetName: functionSubnetName
+    digitalTwinsEndpoint: digitalTwins.outputs.endpoint
+    applicationInsightsName: '${functionName}ai'
+    managedIdentityName : uaminame
+    managedIdentityGroup: resourceGroup().name
   }
 }
 
