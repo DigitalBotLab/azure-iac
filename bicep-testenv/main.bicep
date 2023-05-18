@@ -276,16 +276,6 @@ module function 'modules/function.bicep' = {
   }
 }
 
-
-module funcroleassignment 'modules/funcroleassignement.bicep' = {
-  name: 'funcRoleassignment'
-  params: {
-    principalId: function.outputs.functionIdentityPrincipalId
-    roleId: 'bcd981a7-7f74-457b-83e1-cceb9e632ffe'
-    digitalTwinsInstanceName: digitalTwinsName
-  }
-}
-
 // Creates Event Hubs namespace and associated event hub
 module eventHub 'modules/eventhub.bicep' = {
   name: 'eventHub'
