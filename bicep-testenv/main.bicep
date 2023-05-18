@@ -1,15 +1,3 @@
-@description('Name given to Digital Twins resource')
-param digitalTwinsName string = 'digitalTwins-${uniqueString(resourceGroup().id)}'
-
-@description('Name given to Event Hubs namespace resource')
-param eventHubsNamespaceName string = 'eventHubsNamespace-${uniqueString(resourceGroup().id)}'
-
-@description('Name given to event hub resource')
-param eventHubName string = 'eventHub-${uniqueString(resourceGroup().id)}'
-
-@description('Name given to Azure Data Explorer cluster resource')
-param adxClusterName string = 'adx${uniqueString(resourceGroup().id)}'
-
 @description('Name given to twin lifecycle event table')
 param adxTwinLifecycleEventsTableName string = 'AdtTwinLifecycleEvents'
 
@@ -96,6 +84,11 @@ param principalType string
 ])
 @description('Location of to be created resources')
 param location string
+
+var adxClusterName = 'adx${uniqueString(resourceGroup().id)}'
+var digitalTwinsName = 'digitalTwins-${uniqueString(resourceGroup().id)}'
+var eventHubsNamespaceName = 'eventHubsNamespace-${uniqueString(resourceGroup().id)}'
+var eventHubName = 'eventHub-${uniqueString(resourceGroup().id)}'
 
 // Creates Digital Twins resource
 module digitalTwins 'modules/digitaltwins.bicep' = {

@@ -2,18 +2,6 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "digitalTwinsName": {
-      "value": "[format('digitalTwins-{0}', uniqueString(resourceGroup().id))]"
-    },
-    "eventHubsNamespaceName": {
-      "value": "[format('eventHubsNamespace-{0}', uniqueString(resourceGroup().id))]"
-    },
-    "eventHubName": {
-      "value": "[format('eventHub-{0}', uniqueString(resourceGroup().id))]"
-    },
-    "adxClusterName": {
-      "value": "[format('adx{0}', uniqueString(resourceGroup().id))]"
-    },
     "adxTwinLifecycleEventsTableName": {
       "value": "AdtTwinLifecycleEvents"
     },
