@@ -26,6 +26,14 @@ param digitalTwinsEndpoint string
 @description('Name of application insights instance')
 param applicationInsightsName string
 
+
+@description('User Managed Identity Name to use')
+param managedIdentityName string
+
+@description('User Managed Identity Resource Group')
+param managedIdentityGroup string
+
+
 @description('Specifies the Azure Function hosting plan SKU.')
 @allowed([
   'EP1'
@@ -36,6 +44,12 @@ param functionAppPlanSku string = 'EP1'
 
 resource storageaccount 'Microsoft.Storage/storageAccounts@2022-09-01' existing = {
   name: storageAccountName
+}
+
+// create user assigned managed identity
+resource uami 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' existing = {
+  name: managedIdentityName
+  scope: resourceGroup(managedIdentityGroup)
 }
 
 resource serverfarm 'Microsoft.Web/serverfarms@2022-03-01' = {
@@ -53,7 +67,6 @@ resource serverfarm 'Microsoft.Web/serverfarms@2022-03-01' = {
     reserved: false
   }
 }
-
 
 resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
   name: applicationInsightsName
@@ -81,13 +94,15 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-03
   })
 }
 
-
 resource function 'Microsoft.Web/sites@2022-03-01' = {
   name: functionAppName
   location: location
   kind: 'functionapp'
   identity: {
-    type: 'SystemAssigned'
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${uami.id}': {}
+    }
   }
   properties: {
     serverFarmId: serverfarm.id
