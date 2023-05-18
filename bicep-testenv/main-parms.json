@@ -8,12 +8,6 @@
     "adxRelationshipLifecycleEventsTableName": {
       "value": "AdtRelationshipLifecycleEvents"
     },
-    "databaseName": {
-      "value": "[format('database-{0}', uniqueString(resourceGroup().id))]"
-    },
-    "databaseTableName": {
-      "value": "[format('databaseTable-{0}', uniqueString(resourceGroup().id))]"
-    },
     "eventHubsNamespacePlan": {
       "value": "Basic"
     },

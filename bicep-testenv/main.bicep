@@ -4,12 +4,6 @@ param adxTwinLifecycleEventsTableName string = 'AdtTwinLifecycleEvents'
 @description('Name given to relationship lifecycle event table')
 param adxRelationshipLifecycleEventsTableName string = 'AdtRelationshipLifecycleEvents'
 
-@description('Name given to database')
-param databaseName string = 'database-${uniqueString(resourceGroup().id)}'
-
-@description('Name given to table in database')
-param databaseTableName string = 'databaseTable-${uniqueString(resourceGroup().id)}'
-
 @allowed([
   'Basic'
   'Premium'
@@ -89,6 +83,8 @@ var adxClusterName = 'adx${uniqueString(resourceGroup().id)}'
 var digitalTwinsName = 'digitalTwins-${uniqueString(resourceGroup().id)}'
 var eventHubsNamespaceName = 'eventHubsNamespace-${uniqueString(resourceGroup().id)}'
 var eventHubName = 'eventHub-${uniqueString(resourceGroup().id)}'
+var databaseName = 'database-${uniqueString(resourceGroup().id)}'
+var databaseTableName = 'databaseTable-${uniqueString(resourceGroup().id)}'
 
 // Creates Digital Twins resource
 module digitalTwins 'modules/digitaltwins.bicep' = {
