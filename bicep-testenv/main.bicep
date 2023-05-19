@@ -341,6 +341,8 @@ module tsdbConnection 'modules/tsdbconnection.bicep' = {
     adxRelationshipLifecycleEventsTableName: adxRelationshipLifecycleEventsTableName
     databaseName: databaseName
     databaseTableName: databaseTableName
+    managedIdentityName : uaminame
+    managedIdentityGroup: resourceGroup().name    
   }
   dependsOn: [
     roleAssignment

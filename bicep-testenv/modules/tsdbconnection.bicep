@@ -22,7 +22,19 @@ param databaseName string
 @description('Name given to table in database')
 param databaseTableName string
 
+@description('User Managed Identity Name to use')
+param managedIdentityName string
+
+@description('User Managed Identity Resource Group')
+param managedIdentityGroup string
+
 var eventHubEndpoint = 'sb://${eventHubsNamespaceName}.servicebus.windows.net'
+
+// get user assigned managed identity
+resource uami 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' existing = {
+  name: managedIdentityName
+  scope: resourceGroup(managedIdentityGroup)
+}
 
 // Gets Digital Twins resource
 // Gets Azure Data Explorer cluster resource
@@ -40,6 +52,12 @@ resource eventHubsNamespace 'Microsoft.EventHub/namespaces@2021-11-01' existing 
 resource tsdbConnection 'Microsoft.DigitalTwins/digitalTwinsInstances/timeSeriesDatabaseConnections@2023-01-31' = {
   name: '${digitalTwinsName}/${databaseTableName}'
   properties: {
+    identity: {
+      type: 'UserAssigned'
+      userAssignedIdentities: {
+        '${uami.id}': {}
+      }
+    }
     connectionType: 'AzureDataExplorer'
     adxEndpointUri: adxCluster.properties.uri
     adxDatabaseName: databaseName
