@@ -1,3 +1,6 @@
+@description('Name of the underlying project')
+param project string = 'project'
+
 @description('Name given to twin lifecycle event table')
 param adxTwinLifecycleEventsTableName string = 'AdtTwinLifecycleEvents'
 
@@ -105,25 +108,24 @@ param d2cPartitions int = 4
 
 var unique = substring(uniqueString(resourceGroup().id), 0, 4)
 
-var adxClusterName = 'adx${unique}'
-var digitalTwinsName = 'digitalTwins-${unique}'
-var eventHubsNamespaceName = 'evthubns-${unique}'
-var eventHubName = 'eventHub-${unique}'
-var databaseName = 'database-${unique}'
-var databaseTableName = 'databaseTable-${unique}'
-var logAnalyticsName = 'law-${unique}'
-var functionName = 'dtFunc-${unique}'
-var virtualNetworkName = 'vnet-${unique}'
+var adxClusterName = '${project}-adx${unique}'
+var digitalTwinsName = '${project}-dtwins-${unique}'
+var eventHubsNamespaceName = '${project}hubns-${unique}'
+var eventHubName = '${project}hub-${unique}'
+var databaseName = '${project}-db-${unique}'
+var databaseTableName = '${project}-dt-${unique}'
+var logAnalyticsName = '${project}-law-${unique}'
+var functionName = '${project}-func-${unique}'
+var virtualNetworkName = '${project}-vnet-${unique}'
 
 var privateLinkSubnetName = 'PrivateLinkSubnet'
 var functionSubnetName = 'FunctionSubnet'
 
-var iotHubName = 'iotHub${unique}'
-var storageAccountName = 'stg${uniqueString(resourceGroup().id)}'
-var storageEndpoint = '${unique}StorageEndpont'
+var iotHubName = '${project}-iotHub-${unique}'
+var storageAccountName = '${project}stg${unique}'
+var storageEndpoint = '${project}stgep-${unique}'
 var storageContainerName = 'results'
-var uaminame = 'uai-${unique}'
-
+var uaminame = '${unique}-identity-${unique}'
 
 // create user assigned managed identity
 resource uami 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
