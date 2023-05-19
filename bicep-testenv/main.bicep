@@ -108,10 +108,10 @@ param d2cPartitions int = 4
 
 var unique = substring(uniqueString(resourceGroup().id), 0, 4)
 
-var adxClusterName = '${project}-adx${unique}'
-var digitalTwinsName = '${project}-dtwins-${unique}'
-var eventHubsNamespaceName = '${project}hubns-${unique}'
-var eventHubName = '${project}hub-${unique}'
+var adxClusterName = '${project}-adx-${unique}'
+var digitalTwinsName = '${project}-twins-${unique}'
+var eventHubsNamespaceName = '${project}-hubns-${unique}'
+var eventHubName = '${project}-hub-${unique}'
 var databaseName = '${project}-db-${unique}'
 var databaseTableName = '${project}-dt-${unique}'
 var logAnalyticsName = '${project}-law-${unique}'
@@ -121,11 +121,11 @@ var virtualNetworkName = '${project}-vnet-${unique}'
 var privateLinkSubnetName = 'PrivateLinkSubnet'
 var functionSubnetName = 'FunctionSubnet'
 
-var iotHubName = '${project}-iotHub-${unique}'
+var iotHubName = '${project}-IoThub-${unique}'
 var storageAccountName = '${project}stg${unique}'
 var storageEndpoint = '${project}stgep-${unique}'
 var storageContainerName = 'results'
-var uaminame = '${unique}-identity-${unique}'
+var uaminame = '${project}-identity-${unique}'
 
 // create user assigned managed identity
 resource uami 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
