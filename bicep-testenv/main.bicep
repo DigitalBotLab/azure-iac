@@ -327,24 +327,5 @@ module roleAssignment 'modules/roleassignment.bicep' = {
   ]
 }
 
-// Creates time series data history connection
-module tsdbConnection 'modules/tsdbconnection.bicep' = {
-  name: 'tsdbConnection'
-  params: {
-    digitalTwinsName: digitalTwinsName
-    eventHubsNamespaceName: eventHubsNamespaceName
-    eventHubName: eventHubName
-    adxClusterName: adxClusterName
-    adxTwinLifecycleEventsTableName: adxTwinLifecycleEventsTableName
-    adxRelationshipLifecycleEventsTableName: adxRelationshipLifecycleEventsTableName
-    databaseName: databaseName
-    databaseTableName: databaseTableName
-    managedIdentityName : uaminame
-    managedIdentityGroup: resourceGroup().name    
-  }
-  dependsOn: [
-    roleAssignment, uami
-  ]
-}
 
 
