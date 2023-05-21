@@ -227,8 +227,6 @@ module digitalTwins 'modules/digitaltwins.bicep' = {
   params: {
     digitalTwinsName: digitalTwinsName
     location: location
-    managedIdentityName : uaminame
-    managedIdentityGroup: resourceGroup().name    
   }
 }
 
