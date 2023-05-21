@@ -345,7 +345,7 @@ module tsdbConnection 'modules/tsdbconnection.bicep' = {
     managedIdentityGroup: resourceGroup().name    
   }
   dependsOn: [
-    roleAssignment
+    roleAssignment, uami
   ]
 }
 
