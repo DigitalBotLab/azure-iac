@@ -52,9 +52,12 @@ resource eventHubsNamespace 'Microsoft.EventHub/namespaces@2021-11-01' existing 
 resource tsdbConnection 'Microsoft.DigitalTwins/digitalTwinsInstances/timeSeriesDatabaseConnections@2023-01-31' = {
   name: '${digitalTwinsName}/${databaseTableName}'
   properties: {
+    // identity: {
+    //   type: 'SystemAssigned'
+    // }
     identity: {
       type: 'UserAssigned'
-      userAssignedIdentity: uami.properties.principalId
+      userAssignedIdentity: uami.properties.clientId
     }
     connectionType: 'AzureDataExplorer'
     adxEndpointUri: adxCluster.properties.uri
