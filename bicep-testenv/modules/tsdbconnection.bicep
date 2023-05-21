@@ -54,9 +54,7 @@ resource tsdbConnection 'Microsoft.DigitalTwins/digitalTwinsInstances/timeSeries
   properties: {
     identity: {
       type: 'UserAssigned'
-      userAssignedIdentities: {
-        '${uami.id}': {}
-      }
+      userAssignedIdentity: uami.properties.principalId
     }
     connectionType: 'AzureDataExplorer'
     adxEndpointUri: adxCluster.properties.uri
