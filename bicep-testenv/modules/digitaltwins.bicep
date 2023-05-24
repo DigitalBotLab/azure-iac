@@ -59,7 +59,7 @@ resource twinEndpoint 'Microsoft.DigitalTwins/digitalTwinsInstances/endpoints@20
       userAssignedIdentity: uami.properties.clientId
     }
     endpointType: 'EventHub'   
-    endpointUri: eventHubsNamespace.properties.serviceBusEndpoint 
+    endpointUri: 'sb://${eventHubsNamespace.name}.servicebus.windows.net'
     entityPath: '${eventHubsNamespace.name}/${eventHubName}'
   }
 }
