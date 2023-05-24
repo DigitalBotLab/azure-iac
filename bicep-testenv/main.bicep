@@ -229,9 +229,6 @@ module digitalTwins 'modules/digitaltwins.bicep' = {
     location: location
     eventHubName: eventHubName
     eventHubNamespace: eventHubsNamespaceName
-    managedIdentityName: uaminame
-    managedIdentityGroup: resourceGroup().name
-    managedIdentityId : uami.properties.clientId
   }
   dependsOn: [
     eventHub
