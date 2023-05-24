@@ -232,8 +232,10 @@ module digitalTwins 'modules/digitaltwins.bicep' = {
     managedIdentityName: uaminame
     managedIdentityGroup: resourceGroup().name
   }
+  dependsOn: [
+    eventHub
+  ]
 }
-
 
 module network 'modules/network.bicep' = {
   name: 'network'

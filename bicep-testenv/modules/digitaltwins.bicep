@@ -60,7 +60,7 @@ resource twinEndpoint 'Microsoft.DigitalTwins/digitalTwinsInstances/endpoints@20
     }
     endpointType: 'EventHub'   
     endpointUri: eventHubsNamespace.properties.serviceBusEndpoint 
-    entityPath: eventHubName
+    entityPath: '${eventHubsNamespace.name}/${eventHubName}'
   }
 }
 
