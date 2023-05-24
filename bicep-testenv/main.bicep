@@ -231,9 +231,10 @@ module digitalTwins 'modules/digitaltwins.bicep' = {
     eventHubNamespace: eventHubsNamespaceName
     managedIdentityName: uaminame
     managedIdentityGroup: resourceGroup().name
+    managedIdentityId : uami.properties.clientId
   }
   dependsOn: [
-    eventHub, uami
+    eventHub
   ]
 }
 
