@@ -29,6 +29,10 @@ param managedIdentityName string
 @description('User Managed Identity Resource Group')
 param managedIdentityGroup string
 
+@description('User Managed Identity Resource Group')
+param managedIdentityId string
+
+
 // create user assigned managed identity
 resource uami 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' existing = {
   name: managedIdentityName
@@ -47,7 +51,7 @@ resource digitalTwins 'Microsoft.DigitalTwins/digitalTwinsInstances@2022-10-31' 
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
-      '${uami.id}': {}
+      '${managedIdentityId}': {}
     }
   }
 }
