@@ -233,7 +233,7 @@ module digitalTwins 'modules/digitaltwins.bicep' = {
     managedIdentityGroup: resourceGroup().name
   }
   dependsOn: [
-    eventHub
+    eventHub, uami
   ]
 }
 
