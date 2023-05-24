@@ -227,6 +227,10 @@ module digitalTwins 'modules/digitaltwins.bicep' = {
   params: {
     digitalTwinsName: digitalTwinsName
     location: location
+    eventHubName: eventHubName
+    eventHubNamespace: eventHubsNamespaceName
+    managedIdentityName: uaminame
+    managedIdentityGroup: resourceGroup().name
   }
 }
 
