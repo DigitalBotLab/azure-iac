@@ -45,7 +45,10 @@ resource digitalTwins 'Microsoft.DigitalTwins/digitalTwinsInstances@2022-10-31' 
   name: digitalTwinsName
   location: location
   identity: {
-    type: 'SystemAssigned'
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${uami.id}': {}
+    }
   }
 }
 
