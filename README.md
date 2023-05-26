@@ -1,5 +1,6 @@
-# azure-iac
-Azure Infrastructure As Code
+**Digital Twin Starter Cloud Infrastructure**
+
+Azure Infrastructure As Code (azure-iac)
 
 Infrastruture as Code is a term used to infer that the code to create cloud infrastructure is now stored like code in a versioned respository.  Using tools like ARM, Bicep and Terraform, this code can be instanciated into an actual cloud ecosystem.  This makes it easier to develop, manage and deploy cloud infrastructure at scale and is used by many professional software companies.
 
