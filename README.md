@@ -2,9 +2,9 @@
 
 Azure Infrastructure As Code (azure-iac)
 
-Infrastruture as Code is a term used to infer that the code to create cloud infrastructure is now stored like code in a versioned respository.  Using tools like ARM, Bicep and Terraform, this code can be instanciated into an actual cloud ecosystem.  This makes it easier to develop, manage and deploy cloud infrastructure at scale and is used by many professional software companies.
+Infrastructure as Code refers to the practice of treating the code used to create cloud infrastructure as a versioned repository, similar to traditional software code. This approach utilizes tools such as ARM, Bicep, and Terraform to instantiate this code into an actual cloud ecosystem. By adopting Infrastructure as Code, it becomes more convenient to develop, manage, and deploy cloud infrastructure on a larger scale. Many professional software companies rely on this approach to streamline their operations.
 
-This rep contains Bicep, ARM and Terraform templates of the cloud infrastrcuture needed to support your Digital Twins.
+In this repository, you will find Bicep, ARM, and Terraform templates that define the cloud infrastructure required to support your Digital Twins. These templates serve as a blueprint for provisioning and configuring the necessary resources in the cloud environment.
 
 Follow the Action steps outlined here: 
 https://www.digitaltwinstarter.com/actions/create-cloud-infrastructure-to-provide-an-environment-for-your-digital-twin
