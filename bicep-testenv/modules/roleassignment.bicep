@@ -49,7 +49,6 @@ resource database 'Microsoft.Kusto/clusters/databases@2022-11-11' existing = {
 // Assigns the given principal id input data owner of Digital Twins resource
 resource givenIdToDigitalTwinsRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(digitalTwins.id, principalId, azureRbacAzureDigitalTwinsDataOwner)
-  scope: digitalTwins
   properties: {
     principalId: principalId
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', azureRbacAzureDigitalTwinsDataOwner)
@@ -60,7 +59,6 @@ resource givenIdToDigitalTwinsRoleAssignment 'Microsoft.Authorization/roleAssign
 // Assigns the given principal id input data owner of Digital Twins resource
 resource ManagedIdToDigitalTwinsRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(digitalTwins.id, digitalTwinsIdentityPrincipalId, azureRbacAzureDigitalTwinsDataOwner)
-  scope: digitalTwins
   properties: {
     principalId: digitalTwinsIdentityPrincipalId
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', azureRbacAzureDigitalTwinsDataOwner)
@@ -72,7 +70,6 @@ resource ManagedIdToDigitalTwinsRoleAssignment 'Microsoft.Authorization/roleAssi
 // Assigns Digital Twins resource data owner of event hub
 resource digitalTwinsToEventHubRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(eventhub.id, principalId, azureRbacAzureEventHubsDataOwner)
-  scope: eventhub
   properties: {
     principalId: digitalTwinsIdentityPrincipalId
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', azureRbacAzureEventHubsDataOwner)
