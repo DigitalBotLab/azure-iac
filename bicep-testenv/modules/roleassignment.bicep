@@ -57,6 +57,18 @@ resource givenIdToDigitalTwinsRoleAssignment 'Microsoft.Authorization/roleAssign
   }
 }
 
+// Assigns the given principal id input data owner of Digital Twins resource
+resource ManagedIdToDigitalTwinsRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(digitalTwins.id, digitalTwinsIdentityPrincipalId, azureRbacAzureDigitalTwinsDataOwner)
+  scope: digitalTwins
+  properties: {
+    principalId: digitalTwinsIdentityPrincipalId
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', azureRbacAzureDigitalTwinsDataOwner)
+    principalType:'ServicePrincipal'
+  }
+}
+
+
 // Assigns Digital Twins resource data owner of event hub
 resource digitalTwinsToEventHubRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(eventhub.id, principalId, azureRbacAzureEventHubsDataOwner)
