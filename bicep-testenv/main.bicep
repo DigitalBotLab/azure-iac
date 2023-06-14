@@ -113,7 +113,6 @@ var digitalTwinsName = '${project}-twins-${unique}'
 var eventHubsNamespaceName = '${project}-hubns-${unique}'
 var eventHubName = '${project}-hub-${unique}'
 var databaseName = '${project}-db-${unique}'
-var databaseTableName = '${project}-dt-${unique}'
 var logAnalyticsName = '${project}-law-${unique}'
 var functionName = '${project}-func-${unique}'
 var virtualNetworkName = '${project}-vnet-${unique}'
@@ -262,23 +261,16 @@ module privatelink 'modules/privatelink.bicep' = {
   }
 }
 
-
-module function 'modules/function.bicep' = {
-  name: 'function'
+module functionApp 'modules/function-app.bicep' = {
+  name: 'functionApp'
   params: {
-    location: location
-    virtualNetworkName: virtualNetworkName
-    storageAccountName: storageAccountName
     functionAppName: functionName
-    serverFarmName: functionName
-    logAnalyticsName: logAnalyticsName
-    functionsSubnetName: functionSubnetName
-    digitalTwinsEndpoint: digitalTwins.outputs.endpoint
-    applicationInsightsName: '${functionName}ai'
-    managedIdentityName : uaminame
-    managedIdentityGroup: resourceGroup().name
+    location: location
+    appInsightsLocation: location
   }
+
 }
+
 
 // Creates Event Hubs namespace and associated event hub
 module eventHub 'modules/eventhub.bicep' = {
@@ -295,20 +287,20 @@ module eventHub 'modules/eventhub.bicep' = {
   }
 }
 
-// Creates Azure Data Explorer cluster and database
-module dataExplorerCluster 'modules/dataexplorercluster.bicep' = {
-  name: 'dataExlorerCluster'
-  params: {
-    adxClusterName: adxClusterName
-    databaseName: databaseName
-    clusterPlan: clusterPlan
-    clusterTier: clusterTier
-    clusterCapacity: clusterCapacity
-    hotCachePeriod: hotCachePeriod
-    softDeletePeriod: softDeletePeriod
-    location: location
-  }
-}
+// // Creates Azure Data Explorer cluster and database
+// module dataExplorerCluster 'modules/dataexplorercluster.bicep' = {
+//   name: 'dataExlorerCluster'
+//   params: {
+//     adxClusterName: adxClusterName
+//     databaseName: databaseName
+//     clusterPlan: clusterPlan
+//     clusterTier: clusterTier
+//     clusterCapacity: clusterCapacity
+//     hotCachePeriod: hotCachePeriod
+//     softDeletePeriod: softDeletePeriod
+//     location: location
+//   }
+// }
 
 //Assigns roles to resources
 module roleAssignment 'modules/roleassignment.bicep' = {
@@ -321,13 +313,10 @@ module roleAssignment 'modules/roleassignment.bicep' = {
     digitalTwinsIdentityTenantId: tenantId
     eventHubsNamespaceName: eventHubsNamespaceName
     eventHubName: eventHubName
-    adxClusterName: adxClusterName
-    databaseName: databaseName
   }
   dependsOn: [
     digitalTwins
     eventHub
-    dataExplorerCluster
   ]
 }
 

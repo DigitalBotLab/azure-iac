@@ -13,11 +13,11 @@ param eventHubsNamespaceName string
 @description('Existing event hub name')
 param eventHubName string
 
-@description('Existing Azure Data Explorer cluster resource name')
-param adxClusterName string
+// @description('Existing Azure Data Explorer cluster resource name')
+// param adxClusterName string
 
-@description('Existing database name')
-param databaseName string
+// @description('Existing database name')
+// param databaseName string
 
 @description('The id that will be given data owner permission for the Digital Twins resource')
 param principalId string
@@ -42,9 +42,9 @@ resource eventhub 'Microsoft.EventHub/namespaces/eventhubs@2021-11-01' existing 
 }
 
 // Gets database under the Azure Data Explorer cluster
-resource database 'Microsoft.Kusto/clusters/databases@2022-11-11' existing = {
-  name: '${adxClusterName}/${databaseName}'
-}
+// resource database 'Microsoft.Kusto/clusters/databases@2022-11-11' existing = {
+//   name: '${adxClusterName}/${databaseName}'
+// }
 
 // Assigns the given principal id input data owner of Digital Twins resource
 resource givenIdToDigitalTwinsRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
@@ -66,7 +66,6 @@ resource ManagedIdToDigitalTwinsRoleAssignment 'Microsoft.Authorization/roleAssi
   }
 }
 
-
 // Assigns Digital Twins resource data owner of event hub
 resource digitalTwinsToEventHubRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(eventhub.id, principalId, azureRbacAzureEventHubsDataOwner)
@@ -77,25 +76,25 @@ resource digitalTwinsToEventHubRoleAssignment 'Microsoft.Authorization/roleAssig
   }
 }
 
-// Assigns Digital Twins resource admin assignment to database
-resource digitalTwinsToDatabasePrincipalAssignment 'Microsoft.Kusto/clusters/databases/principalAssignments@2022-11-11' = {
-  parent: database
-  name: guid(database.id, principalId, 'Admin')
-  properties: {
-    principalId: digitalTwinsIdentityPrincipalId
-    role: 'Admin'
-    tenantId: digitalTwinsIdentityTenantId
-    principalType: 'App'
-  }
-}
+// // Assigns Digital Twins resource admin assignment to database
+// resource digitalTwinsToDatabasePrincipalAssignment 'Microsoft.Kusto/clusters/databases/principalAssignments@2022-11-11' = {
+//   parent: database
+//   name: guid(database.id, principalId, 'Admin')
+//   properties: {
+//     principalId: digitalTwinsIdentityPrincipalId
+//     role: 'Admin'
+//     tenantId: digitalTwinsIdentityTenantId
+//     principalType: 'App'
+//   }
+// }
 
-// Assigns Digital Twins resource contributor assignment to database
-resource digitalTwinsToDatabaseRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(database.id, principalId, azureRbacContributor)
-  scope: database
-  properties: {
-    principalId: digitalTwinsIdentityPrincipalId
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', azureRbacContributor)
-    principalType: 'ServicePrincipal'
-  }
-}
+// // Assigns Digital Twins resource contributor assignment to database
+// resource digitalTwinsToDatabaseRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+//   name: guid(database.id, principalId, azureRbacContributor)
+//   scope: database
+//   properties: {
+//     principalId: digitalTwinsIdentityPrincipalId
+//     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', azureRbacContributor)
+//     principalType: 'ServicePrincipal'
+//   }
+// }

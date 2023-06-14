@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.17.1.54307",
-      "templateHash": "17444684034675442472"
+      "version": "0.18.4.5664",
+      "templateHash": "6314719286086037041"
     }
   },
   "parameters": {
@@ -210,7 +210,6 @@
     "eventHubsNamespaceName": "[format('{0}-hubns-{1}', parameters('project'), variables('unique'))]",
     "eventHubName": "[format('{0}-hub-{1}', parameters('project'), variables('unique'))]",
     "databaseName": "[format('{0}-db-{1}', parameters('project'), variables('unique'))]",
-    "databaseTableName": "[format('{0}-dt-{1}', parameters('project'), variables('unique'))]",
     "logAnalyticsName": "[format('{0}-law-{1}', parameters('project'), variables('unique'))]",
     "functionName": "[format('{0}-func-{1}', parameters('project'), variables('unique'))]",
     "virtualNetworkName": "[format('{0}-vnet-{1}', parameters('project'), variables('unique'))]",
@@ -352,8 +351,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.17.1.54307",
-              "templateHash": "2928911769022261448"
+              "version": "0.18.4.5664",
+              "templateHash": "6073520765034248193"
             }
           },
           "parameters": {
@@ -477,8 +476,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.17.1.54307",
-              "templateHash": "8302231950884363316"
+              "version": "0.18.4.5664",
+              "templateHash": "10710918550351307384"
             }
           },
           "parameters": {
@@ -604,8 +603,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.17.1.54307",
-              "templateHash": "14426212466168259251"
+              "version": "0.18.4.5664",
+              "templateHash": "3253194119830244869"
             }
           },
           "parameters": {
@@ -725,45 +724,21 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
-      "name": "function",
+      "name": "functionApp",
       "properties": {
         "expressionEvaluationOptions": {
           "scope": "inner"
         },
         "mode": "Incremental",
         "parameters": {
-          "location": {
-            "value": "[parameters('location')]"
-          },
-          "virtualNetworkName": {
-            "value": "[variables('virtualNetworkName')]"
-          },
-          "storageAccountName": {
-            "value": "[variables('storageAccountName')]"
-          },
           "functionAppName": {
             "value": "[variables('functionName')]"
           },
-          "serverFarmName": {
-            "value": "[variables('functionName')]"
+          "location": {
+            "value": "[parameters('location')]"
           },
-          "logAnalyticsName": {
-            "value": "[variables('logAnalyticsName')]"
-          },
-          "functionsSubnetName": {
-            "value": "[variables('functionSubnetName')]"
-          },
-          "digitalTwinsEndpoint": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'digitalTwins'), '2022-09-01').outputs.endpoint.value]"
-          },
-          "applicationInsightsName": {
-            "value": "[format('{0}ai', variables('functionName'))]"
-          },
-          "managedIdentityName": {
-            "value": "[variables('uaminame')]"
-          },
-          "managedIdentityGroup": {
-            "value": "[resourceGroup().name]"
+          "appInsightsLocation": {
+            "value": "[parameters('location')]"
           }
         },
         "template": {
@@ -772,29 +747,11 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.17.1.54307",
-              "templateHash": "15109767001221556023"
+              "version": "0.18.4.5664",
+              "templateHash": "2807847628856735480"
             }
           },
           "parameters": {
-            "location": {
-              "type": "string",
-              "metadata": {
-                "description": "Location of Azure Function"
-              }
-            },
-            "virtualNetworkName": {
-              "type": "string",
-              "metadata": {
-                "description": "Virtual Network Name"
-              }
-            },
-            "storageAccountName": {
-              "type": "string",
-              "metadata": {
-                "description": "Storage Account name"
-              }
-            },
             "functionAppName": {
               "type": "string",
               "maxLength": 16,
@@ -802,177 +759,148 @@
                 "description": "Name of the function app"
               }
             },
-            "serverFarmName": {
+            "storageAccountType": {
               "type": "string",
-              "metadata": {
-                "description": "Name of the server farm"
-              }
-            },
-            "logAnalyticsName": {
-              "type": "string",
-              "metadata": {
-                "description": "Name of the LAW workspace"
-              }
-            },
-            "functionsSubnetName": {
-              "type": "string",
-              "metadata": {
-                "description": "Name of the subnet to connect the function to"
-              }
-            },
-            "digitalTwinsEndpoint": {
-              "type": "string",
-              "metadata": {
-                "description": "Digital Twins endpoint"
-              }
-            },
-            "applicationInsightsName": {
-              "type": "string",
-              "metadata": {
-                "description": "Name of application insights instance"
-              }
-            },
-            "managedIdentityName": {
-              "type": "string",
-              "metadata": {
-                "description": "User Managed Identity Name to use"
-              }
-            },
-            "managedIdentityGroup": {
-              "type": "string",
-              "metadata": {
-                "description": "User Managed Identity Resource Group"
-              }
-            },
-            "functionAppPlanSku": {
-              "type": "string",
-              "defaultValue": "EP1",
+              "defaultValue": "Standard_LRS",
               "allowedValues": [
-                "EP1",
-                "EP2",
-                "EP3"
+                "Standard_LRS",
+                "Standard_GRS",
+                "Standard_RAGRS"
               ],
               "metadata": {
-                "description": "Specifies the Azure Function hosting plan SKU."
+                "description": "Storage Account type"
+              }
+            },
+            "location": {
+              "type": "string",
+              "metadata": {
+                "description": "Location for all resources."
+              }
+            },
+            "appInsightsLocation": {
+              "type": "string",
+              "metadata": {
+                "description": "Location for Application Insights"
+              }
+            },
+            "runtime": {
+              "type": "string",
+              "defaultValue": "dotnet",
+              "allowedValues": [
+                "node",
+                "dotnet",
+                "java"
+              ],
+              "metadata": {
+                "description": "The language worker runtime to load in the function app."
               }
             }
           },
+          "variables": {
+            "hostingPlanName": "[format('{0}-plan', parameters('functionAppName'))]",
+            "applicationInsightsName": "[format('{0}-appi', parameters('functionAppName'))]",
+            "storageAccountName": "[format('{0}storage', parameters('functionAppName'))]",
+            "functionWorkerRuntime": "[parameters('runtime')]"
+          },
           "resources": [
             {
-              "type": "Microsoft.Web/serverfarms",
-              "apiVersion": "2022-03-01",
-              "name": "[parameters('serverFarmName')]",
+              "type": "Microsoft.Storage/storageAccounts",
+              "apiVersion": "2022-05-01",
+              "name": "[variables('storageAccountName')]",
               "location": "[parameters('location')]",
-              "kind": "elastic",
               "sku": {
-                "name": "[parameters('functionAppPlanSku')]",
-                "tier": "ElasticPremium",
-                "size": "[parameters('functionAppPlanSku')]",
-                "family": "EP"
+                "name": "[parameters('storageAccountType')]"
               },
+              "kind": "Storage",
               "properties": {
-                "maximumElasticWorkerCount": 4,
-                "reserved": false
+                "supportsHttpsTrafficOnly": true,
+                "defaultToOAuthAuthentication": true
               }
             },
             {
-              "type": "Microsoft.Insights/components",
-              "apiVersion": "2020-02-02-preview",
-              "name": "[parameters('applicationInsightsName')]",
+              "type": "Microsoft.Web/serverfarms",
+              "apiVersion": "2021-03-01",
+              "name": "[variables('hostingPlanName')]",
               "location": "[parameters('location')]",
-              "kind": "web",
-              "properties": {
-                "Application_Type": "web",
-                "publicNetworkAccessForIngestion": "Enabled",
-                "publicNetworkAccessForQuery": "Enabled",
-                "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsName'))]"
+              "sku": {
+                "name": "Y1",
+                "tier": "Dynamic"
               },
-              "dependsOn": [
-                "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsName'))]"
-              ]
-            },
-            {
-              "type": "Microsoft.OperationalInsights/workspaces",
-              "apiVersion": "2020-03-01-preview",
-              "name": "[parameters('logAnalyticsName')]",
-              "location": "[parameters('location')]",
-              "properties": {
-                "retentionInDays": 30,
-                "features": {
-                  "searchVersion": 1
-                },
-                "sku": {
-                  "name": "PerGB2018"
-                }
-              }
+              "properties": {}
             },
             {
               "type": "Microsoft.Web/sites",
-              "apiVersion": "2022-03-01",
+              "apiVersion": "2021-03-01",
               "name": "[parameters('functionAppName')]",
               "location": "[parameters('location')]",
               "kind": "functionapp",
               "identity": {
-                "type": "UserAssigned",
-                "userAssignedIdentities": {
-                  "[format('{0}', extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('managedIdentityGroup')), 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('managedIdentityName')))]": {}
-                }
+                "type": "SystemAssigned"
               },
               "properties": {
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverFarmName'))]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
                 "siteConfig": {
                   "appSettings": [
                     {
-                      "name": "AzureWebJobsDashboard",
-                      "value": "[format('DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1}', parameters('storageAccountName'), listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2022-09-01').keys[0].value)]"
+                      "name": "AzureWebJobsStorage",
+                      "value": "[format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', variables('storageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2022-05-01').keys[0].value)]"
                     },
                     {
-                      "name": "AzureWebJobsStorage",
-                      "value": "[format('DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1}', parameters('storageAccountName'), listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2022-09-01').keys[0].value)]"
+                      "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                      "value": "[format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', variables('storageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2022-05-01').keys[0].value)]"
+                    },
+                    {
+                      "name": "WEBSITE_CONTENTSHARE",
+                      "value": "[toLower(parameters('functionAppName'))]"
                     },
                     {
                       "name": "FUNCTIONS_EXTENSION_VERSION",
-                      "value": "~3"
+                      "value": "~4"
+                    },
+                    {
+                      "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                      "value": "~14"
                     },
                     {
                       "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                      "value": "[reference(format('{0}', resourceId('Microsoft.Insights/components', parameters('applicationInsightsName'))), '2020-02-02').InstrumentationKey]"
+                      "value": "[reference(resourceId('Microsoft.Insights/components', variables('applicationInsightsName')), '2020-02-02').InstrumentationKey]"
                     },
                     {
                       "name": "FUNCTIONS_WORKER_RUNTIME",
-                      "value": "dotnet"
-                    },
-                    {
-                      "name": "ADT_ENDPOINT",
-                      "value": "[format('https://{0}', parameters('digitalTwinsEndpoint'))]"
+                      "value": "[variables('functionWorkerRuntime')]"
                     }
-                  ]
+                  ],
+                  "ftpsState": "FtpsOnly",
+                  "minTlsVersion": "1.2"
                 },
-                "vnetRouteAllEnabled": true
+                "httpsOnly": true
               },
               "dependsOn": [
-                "[resourceId('Microsoft.Insights/components', parameters('applicationInsightsName'))]",
-                "[resourceId('Microsoft.Web/serverfarms', parameters('serverFarmName'))]"
+                "[resourceId('Microsoft.Insights/components', variables('applicationInsightsName'))]",
+                "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
               ]
             },
             {
-              "type": "Microsoft.Web/sites/networkConfig",
-              "apiVersion": "2022-03-01",
-              "name": "[format('{0}/{1}', parameters('functionAppName'), 'virtualNetwork')]",
+              "type": "Microsoft.Insights/components",
+              "apiVersion": "2020-02-02",
+              "name": "[variables('applicationInsightsName')]",
+              "location": "[parameters('appInsightsLocation')]",
+              "kind": "web",
               "properties": {
-                "subnetResourceId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('functionsSubnetName'))]",
-                "swiftSupported": true
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"
-              ]
+                "Application_Type": "web",
+                "Request_Source": "rest"
+              }
             }
-          ]
+          ],
+          "outputs": {
+            "managed_identity": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Web/sites', parameters('functionAppName')), '2021-03-01', 'full').identity.principalId]"
+            }
+          }
         }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'digitalTwins')]"
-      ]
+      }
     },
     {
       "type": "Microsoft.Resources/deployments",
@@ -1015,8 +943,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.17.1.54307",
-              "templateHash": "10228038546133259021"
+              "version": "0.18.4.5664",
+              "templateHash": "4914709014961674589"
             }
           },
           "parameters": {
@@ -1109,137 +1037,6 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
-      "name": "dataExlorerCluster",
-      "properties": {
-        "expressionEvaluationOptions": {
-          "scope": "inner"
-        },
-        "mode": "Incremental",
-        "parameters": {
-          "adxClusterName": {
-            "value": "[variables('adxClusterName')]"
-          },
-          "databaseName": {
-            "value": "[variables('databaseName')]"
-          },
-          "clusterPlan": {
-            "value": "[parameters('clusterPlan')]"
-          },
-          "clusterTier": {
-            "value": "[parameters('clusterTier')]"
-          },
-          "clusterCapacity": {
-            "value": "[parameters('clusterCapacity')]"
-          },
-          "hotCachePeriod": {
-            "value": "[parameters('hotCachePeriod')]"
-          },
-          "softDeletePeriod": {
-            "value": "[parameters('softDeletePeriod')]"
-          },
-          "location": {
-            "value": "[parameters('location')]"
-          }
-        },
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "metadata": {
-            "_generator": {
-              "name": "bicep",
-              "version": "0.17.1.54307",
-              "templateHash": "17555029341639993516"
-            }
-          },
-          "parameters": {
-            "adxClusterName": {
-              "type": "string",
-              "metadata": {
-                "description": "Name given to Azure Data Explorer cluster resource"
-              }
-            },
-            "databaseName": {
-              "type": "string",
-              "metadata": {
-                "description": "Name given to database"
-              }
-            },
-            "clusterPlan": {
-              "type": "string",
-              "metadata": {
-                "description": "Azure Data Explorer cluster SKU option"
-              }
-            },
-            "clusterCapacity": {
-              "type": "int",
-              "metadata": {
-                "description": "Azure Data Explorer cluster capacity"
-              }
-            },
-            "clusterTier": {
-              "type": "string",
-              "metadata": {
-                "description": "Azure Data Explorer cluster tier"
-              }
-            },
-            "hotCachePeriod": {
-              "type": "string",
-              "metadata": {
-                "description": "The time to keep database data in cache"
-              }
-            },
-            "softDeletePeriod": {
-              "type": "string",
-              "metadata": {
-                "description": "The time data is kept in database"
-              }
-            },
-            "location": {
-              "type": "string",
-              "metadata": {
-                "description": "Location of to be created resources"
-              }
-            }
-          },
-          "resources": [
-            {
-              "type": "Microsoft.Kusto/clusters",
-              "apiVersion": "2022-11-11",
-              "name": "[parameters('adxClusterName')]",
-              "location": "[parameters('location')]",
-              "sku": {
-                "capacity": "[parameters('clusterCapacity')]",
-                "name": "[parameters('clusterPlan')]",
-                "tier": "[parameters('clusterTier')]"
-              },
-              "identity": {
-                "type": "None"
-              },
-              "properties": {
-                "enableAutoStop": false
-              }
-            },
-            {
-              "type": "Microsoft.Kusto/clusters/databases",
-              "apiVersion": "2022-11-11",
-              "name": "[format('{0}/{1}', parameters('adxClusterName'), parameters('databaseName'))]",
-              "location": "[parameters('location')]",
-              "kind": "ReadWrite",
-              "properties": {
-                "hotCachePeriod": "[parameters('hotCachePeriod')]",
-                "softDeletePeriod": "[parameters('softDeletePeriod')]"
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.Kusto/clusters', parameters('adxClusterName'))]"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2022-09-01",
       "name": "roleAssignment",
       "properties": {
         "expressionEvaluationOptions": {
@@ -1267,12 +1064,6 @@
           },
           "eventHubName": {
             "value": "[variables('eventHubName')]"
-          },
-          "adxClusterName": {
-            "value": "[variables('adxClusterName')]"
-          },
-          "databaseName": {
-            "value": "[variables('databaseName')]"
           }
         },
         "template": {
@@ -1281,8 +1072,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.17.1.54307",
-              "templateHash": "18365083190147377988"
+              "version": "0.18.4.5664",
+              "templateHash": "414859765316230981"
             }
           },
           "parameters": {
@@ -1316,18 +1107,6 @@
                 "description": "Existing event hub name"
               }
             },
-            "adxClusterName": {
-              "type": "string",
-              "metadata": {
-                "description": "Existing Azure Data Explorer cluster resource name"
-              }
-            },
-            "databaseName": {
-              "type": "string",
-              "metadata": {
-                "description": "Existing database name"
-              }
-            },
             "principalId": {
               "type": "string",
               "metadata": {
@@ -1351,7 +1130,6 @@
             {
               "type": "Microsoft.Authorization/roleAssignments",
               "apiVersion": "2022-04-01",
-              "scope": "[format('Microsoft.DigitalTwins/digitalTwinsInstances/{0}', parameters('digitalTwinsName'))]",
               "name": "[guid(resourceId('Microsoft.DigitalTwins/digitalTwinsInstances', parameters('digitalTwinsName')), parameters('principalId'), variables('azureRbacAzureDigitalTwinsDataOwner'))]",
               "properties": {
                 "principalId": "[parameters('principalId')]",
@@ -1362,33 +1140,20 @@
             {
               "type": "Microsoft.Authorization/roleAssignments",
               "apiVersion": "2022-04-01",
-              "scope": "[format('Microsoft.EventHub/namespaces/{0}/eventhubs/{1}', split(format('{0}/{1}', parameters('eventHubsNamespaceName'), parameters('eventHubName')), '/')[0], split(format('{0}/{1}', parameters('eventHubsNamespaceName'), parameters('eventHubName')), '/')[1])]",
-              "name": "[guid(resourceId('Microsoft.EventHub/namespaces/eventhubs', split(format('{0}/{1}', parameters('eventHubsNamespaceName'), parameters('eventHubName')), '/')[0], split(format('{0}/{1}', parameters('eventHubsNamespaceName'), parameters('eventHubName')), '/')[1]), parameters('principalId'), variables('azureRbacAzureEventHubsDataOwner'))]",
+              "name": "[guid(resourceId('Microsoft.DigitalTwins/digitalTwinsInstances', parameters('digitalTwinsName')), parameters('digitalTwinsIdentityPrincipalId'), variables('azureRbacAzureDigitalTwinsDataOwner'))]",
               "properties": {
                 "principalId": "[parameters('digitalTwinsIdentityPrincipalId')]",
-                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('azureRbacAzureEventHubsDataOwner'))]",
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('azureRbacAzureDigitalTwinsDataOwner'))]",
                 "principalType": "ServicePrincipal"
-              }
-            },
-            {
-              "type": "Microsoft.Kusto/clusters/databases/principalAssignments",
-              "apiVersion": "2022-11-11",
-              "name": "[format('{0}/{1}/{2}', split(format('{0}/{1}', parameters('adxClusterName'), parameters('databaseName')), '/')[0], split(format('{0}/{1}', parameters('adxClusterName'), parameters('databaseName')), '/')[1], guid(resourceId('Microsoft.Kusto/clusters/databases', split(format('{0}/{1}', parameters('adxClusterName'), parameters('databaseName')), '/')[0], split(format('{0}/{1}', parameters('adxClusterName'), parameters('databaseName')), '/')[1]), parameters('principalId'), 'Admin'))]",
-              "properties": {
-                "principalId": "[parameters('digitalTwinsIdentityPrincipalId')]",
-                "role": "Admin",
-                "tenantId": "[parameters('digitalTwinsIdentityTenantId')]",
-                "principalType": "App"
               }
             },
             {
               "type": "Microsoft.Authorization/roleAssignments",
               "apiVersion": "2022-04-01",
-              "scope": "[format('Microsoft.Kusto/clusters/{0}/databases/{1}', split(format('{0}/{1}', parameters('adxClusterName'), parameters('databaseName')), '/')[0], split(format('{0}/{1}', parameters('adxClusterName'), parameters('databaseName')), '/')[1])]",
-              "name": "[guid(resourceId('Microsoft.Kusto/clusters/databases', split(format('{0}/{1}', parameters('adxClusterName'), parameters('databaseName')), '/')[0], split(format('{0}/{1}', parameters('adxClusterName'), parameters('databaseName')), '/')[1]), parameters('principalId'), variables('azureRbacContributor'))]",
+              "name": "[guid(resourceId('Microsoft.EventHub/namespaces/eventhubs', split(format('{0}/{1}', parameters('eventHubsNamespaceName'), parameters('eventHubName')), '/')[0], split(format('{0}/{1}', parameters('eventHubsNamespaceName'), parameters('eventHubName')), '/')[1]), parameters('principalId'), variables('azureRbacAzureEventHubsDataOwner'))]",
               "properties": {
                 "principalId": "[parameters('digitalTwinsIdentityPrincipalId')]",
-                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('azureRbacContributor'))]",
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('azureRbacAzureEventHubsDataOwner'))]",
                 "principalType": "ServicePrincipal"
               }
             }
@@ -1396,7 +1161,6 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'dataExlorerCluster')]",
         "[resourceId('Microsoft.Resources/deployments', 'digitalTwins')]",
         "[resourceId('Microsoft.Resources/deployments', 'eventHub')]",
         "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('uaminame'))]"
