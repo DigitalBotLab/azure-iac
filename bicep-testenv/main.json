@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.18.4.5664",
-      "templateHash": "13487542737227536442"
+      "templateHash": "9267656700380854676"
     }
   },
   "parameters": {
@@ -212,6 +212,7 @@
     "databaseName": "[format('{0}-db-{1}', parameters('project'), variables('unique'))]",
     "logAnalyticsName": "[format('{0}-law-{1}', parameters('project'), variables('unique'))]",
     "functionName": "[format('{0}-func-{1}', parameters('project'), variables('unique'))]",
+    "functionSubscription": "[format('{0}-funcsub-{1}', parameters('project'), variables('unique'))]",
     "virtualNetworkName": "[format('{0}-vnet-{1}', parameters('project'), variables('unique'))]",
     "privateLinkSubnetName": "PrivateLinkSubnet",
     "functionSubnetName": "FunctionSubnet",
@@ -328,6 +329,28 @@
       "dependsOn": [
         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
         "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('uaminame'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.EventGrid/eventSubscriptions",
+      "apiVersion": "2020-06-01",
+      "name": "[variables('functionSubscription')]",
+      "properties": {
+        "destination": {
+          "endpointType": "AzureFunction",
+          "properties": {
+            "maxEventsPerBatch": 10,
+            "preferredBatchSizeInKilobytes": 64,
+            "resourceId": "[reference(resourceId('Microsoft.Resources/deployments', 'functionApp'), '2022-09-01').outputs.eventFunction.value]"
+          }
+        },
+        "eventDeliverySchema": "EventGridSchema",
+        "filter": {
+          "isSubjectCaseSensitive": false
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'functionApp')]"
       ]
     },
     {
@@ -768,7 +791,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.18.4.5664",
-              "templateHash": "14911549600229670246"
+              "templateHash": "7315762726975619176"
             }
           },
           "parameters": {
@@ -963,7 +986,13 @@
                 }
               }
             }
-          ]
+          ],
+          "outputs": {
+            "eventFunction": {
+              "type": "string",
+              "value": "[format('{0}/functions/ProcessHubToDTEvents', resourceId('Microsoft.Web/sites', parameters('functionAppName')))]"
+            }
+          }
         }
       },
       "dependsOn": [

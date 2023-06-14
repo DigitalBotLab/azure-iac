@@ -152,3 +152,7 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-03
     }
   })
 }
+
+output eventFunction string = '${functionApp.id}/functions/ProcessHubToDTEvents'
+
+

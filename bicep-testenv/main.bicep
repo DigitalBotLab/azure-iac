@@ -115,6 +115,7 @@ var eventHubName = '${project}-hub-${unique}'
 var databaseName = '${project}-db-${unique}'
 var logAnalyticsName = '${project}-law-${unique}'
 var functionName = '${project}-func-${unique}'
+var functionSubscription = '${project}-funcsub-${unique}'
 var virtualNetworkName = '${project}-vnet-${unique}'
 
 var privateLinkSubnetName = 'PrivateLinkSubnet'
@@ -223,6 +224,29 @@ resource IoTHub 'Microsoft.Devices/IotHubs@2021-07-02' = {
         ttlAsIso8601: 'PT1H'
         maxDeliveryCount: 10
       }
+    }
+  }
+}
+
+// resource eventGridTopic 'Microsoft.EventGrid/topics@2020-06-01' = {
+//   name: eventGridTopicName
+//   location: location
+// }
+
+resource eventGridSubscription 'Microsoft.EventGrid/eventSubscriptions@2020-06-01' = {
+  name: functionSubscription
+  properties: {
+    destination: {
+      endpointType: 'AzureFunction'
+      properties: {
+        maxEventsPerBatch: 10
+        preferredBatchSizeInKilobytes: 64
+        resourceId: functionApp.outputs.eventFunction
+      }
+    }
+    eventDeliverySchema: 'EventGridSchema'
+    filter: {
+      isSubjectCaseSensitive: false
     }
   }
 }
