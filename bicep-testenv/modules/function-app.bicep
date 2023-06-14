@@ -3,6 +3,9 @@
 @maxLength(16)
 param functionAppName string
 
+@description('Digital Twins endpoint')
+param digitalTwinsEndpoint string
+
 @description('Name of the storage app')
 @maxLength(24)
 param storageAccountName string
@@ -110,6 +113,10 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
         {
           name: 'FUNCTIONS_WORKER_RUNTIME'
           value: functionWorkerRuntime
+        }
+        {
+          name: 'ADT_ENDPOINT'
+          value: 'https://${digitalTwinsEndpoint}'
         }
       ]
       ftpsState: 'FtpsOnly'

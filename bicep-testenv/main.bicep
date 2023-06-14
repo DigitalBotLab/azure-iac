@@ -271,6 +271,7 @@ module functionApp 'modules/function-app.bicep' = {
     logAnalyticsName: logAnalyticsName
     managedIdentityName: uaminame
     managedIdentityGroup: resourceGroup().name
+    digitalTwinsEndpoint: digitalTwins.outputs.endpoint
   }
 }
 
