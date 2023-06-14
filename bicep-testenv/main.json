@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.18.4.5664",
-      "templateHash": "6314719286086037041"
+      "templateHash": "16968382448993550502"
     }
   },
   "parameters": {
@@ -217,6 +217,7 @@
     "functionSubnetName": "FunctionSubnet",
     "iotHubName": "[format('{0}-IoThub-{1}', parameters('project'), variables('unique'))]",
     "storageAccountName": "[format('{0}stg{1}', parameters('project'), variables('unique'))]",
+    "funcStorageAccountName": "[format('{0}fstg{1}', parameters('project'), variables('unique'))]",
     "storageEndpoint": "[format('{0}stgep-{1}', parameters('project'), variables('unique'))]",
     "storageContainerName": "results",
     "uaminame": "[format('{0}-identity-{1}', parameters('project'), variables('unique'))]"
@@ -739,6 +740,9 @@
           },
           "appInsightsLocation": {
             "value": "[parameters('location')]"
+          },
+          "storageAccountName": {
+            "value": "[variables('funcStorageAccountName')]"
           }
         },
         "template": {
@@ -748,7 +752,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.18.4.5664",
-              "templateHash": "2807847628856735480"
+              "templateHash": "3019723984408316962"
             }
           },
           "parameters": {
@@ -757,6 +761,13 @@
               "maxLength": 16,
               "metadata": {
                 "description": "Name of the function app"
+              }
+            },
+            "storageAccountName": {
+              "type": "string",
+              "maxLength": 24,
+              "metadata": {
+                "description": "Name of the storage app"
               }
             },
             "storageAccountType": {
@@ -799,14 +810,13 @@
           "variables": {
             "hostingPlanName": "[format('{0}-plan', parameters('functionAppName'))]",
             "applicationInsightsName": "[format('{0}-appi', parameters('functionAppName'))]",
-            "storageAccountName": "[format('{0}storage', parameters('functionAppName'))]",
             "functionWorkerRuntime": "[parameters('runtime')]"
           },
           "resources": [
             {
               "type": "Microsoft.Storage/storageAccounts",
               "apiVersion": "2022-05-01",
-              "name": "[variables('storageAccountName')]",
+              "name": "[parameters('storageAccountName')]",
               "location": "[parameters('location')]",
               "sku": {
                 "name": "[parameters('storageAccountType')]"
@@ -843,11 +853,11 @@
                   "appSettings": [
                     {
                       "name": "AzureWebJobsStorage",
-                      "value": "[format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', variables('storageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2022-05-01').keys[0].value)]"
+                      "value": "[format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', parameters('storageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2022-05-01').keys[0].value)]"
                     },
                     {
                       "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                      "value": "[format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', variables('storageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2022-05-01').keys[0].value)]"
+                      "value": "[format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', parameters('storageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2022-05-01').keys[0].value)]"
                     },
                     {
                       "name": "WEBSITE_CONTENTSHARE",
@@ -878,7 +888,7 @@
               "dependsOn": [
                 "[resourceId('Microsoft.Insights/components', variables('applicationInsightsName'))]",
                 "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
               ]
             },
             {

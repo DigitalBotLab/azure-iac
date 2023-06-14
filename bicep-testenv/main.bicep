@@ -122,6 +122,7 @@ var functionSubnetName = 'FunctionSubnet'
 
 var iotHubName = '${project}-IoThub-${unique}'
 var storageAccountName = '${project}stg${unique}'
+var funcStorageAccountName = '${project}fstg${unique}'
 var storageEndpoint = '${project}stgep-${unique}'
 var storageContainerName = 'results'
 var uaminame = '${project}-identity-${unique}'
@@ -267,10 +268,9 @@ module functionApp 'modules/function-app.bicep' = {
     functionAppName: functionName
     location: location
     appInsightsLocation: location
+    storageAccountName: funcStorageAccountName
   }
-
 }
-
 
 // Creates Event Hubs namespace and associated event hub
 module eventHub 'modules/eventhub.bicep' = {

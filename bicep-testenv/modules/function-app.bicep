@@ -3,6 +3,10 @@
 @maxLength(16)
 param functionAppName string
 
+@description('Name of the storage app')
+@maxLength(24)
+param storageAccountName string
+
 @description('Storage Account type')
 @allowed([
   'Standard_LRS'
@@ -27,7 +31,6 @@ param runtime string = 'dotnet'
 
 var hostingPlanName = '${functionAppName}-plan'
 var applicationInsightsName = '${functionAppName}-appi'
-var storageAccountName = '${functionAppName}storage'
 var functionWorkerRuntime = runtime
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
