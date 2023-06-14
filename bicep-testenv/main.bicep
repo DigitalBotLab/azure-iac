@@ -228,29 +228,6 @@ resource IoTHub 'Microsoft.Devices/IotHubs@2021-07-02' = {
   }
 }
 
-// resource eventGridTopic 'Microsoft.EventGrid/topics@2020-06-01' = {
-//   name: eventGridTopicName
-//   location: location
-// }
-
-resource eventGridSubscription 'Microsoft.EventGrid/eventSubscriptions@2020-06-01' = {
-  name: functionSubscription
-  properties: {
-    destination: {
-      endpointType: 'AzureFunction'
-      properties: {
-        maxEventsPerBatch: 10
-        preferredBatchSizeInKilobytes: 64
-        resourceId: functionApp.outputs.eventFunction
-      }
-    }
-    eventDeliverySchema: 'EventGridSchema'
-    filter: {
-      isSubjectCaseSensitive: false
-    }
-  }
-}
-
 // Creates Digital Twins resource
 module digitalTwins 'modules/digitaltwins.bicep' = {
   name: 'digitalTwins'
