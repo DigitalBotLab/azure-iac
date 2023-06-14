@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.18.4.5664",
-      "templateHash": "287283888326063304"
+      "templateHash": "13487542737227536442"
     }
   },
   "parameters": {
@@ -259,6 +259,12 @@
         "name": "[parameters('skuName')]",
         "capacity": "[parameters('skuUnits')]"
       },
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "[format('{0}', resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('uaminame')))]": {}
+        }
+      },
       "properties": {
         "eventHubEndpoints": {
           "events": {
@@ -320,7 +326,8 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('uaminame'))]"
       ]
     },
     {
