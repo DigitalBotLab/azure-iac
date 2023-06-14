@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.18.4.5664",
-      "templateHash": "18164019658395862656"
+      "templateHash": "287283888326063304"
     }
   },
   "parameters": {
@@ -749,6 +749,9 @@
           },
           "managedIdentityGroup": {
             "value": "[resourceGroup().name]"
+          },
+          "digitalTwinsEndpoint": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'digitalTwins'), '2022-09-01').outputs.endpoint.value]"
           }
         },
         "template": {
@@ -758,7 +761,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.18.4.5664",
-              "templateHash": "5485357309859791047"
+              "templateHash": "14911549600229670246"
             }
           },
           "parameters": {
@@ -767,6 +770,12 @@
               "maxLength": 16,
               "metadata": {
                 "description": "Name of the function app"
+              }
+            },
+            "digitalTwinsEndpoint": {
+              "type": "string",
+              "metadata": {
+                "description": "Digital Twins endpoint"
               }
             },
             "storageAccountName": {
@@ -899,6 +908,10 @@
                     {
                       "name": "FUNCTIONS_WORKER_RUNTIME",
                       "value": "[variables('functionWorkerRuntime')]"
+                    },
+                    {
+                      "name": "ADT_ENDPOINT",
+                      "value": "[format('https://{0}', parameters('digitalTwinsEndpoint'))]"
                     }
                   ],
                   "ftpsState": "FtpsOnly",
@@ -945,7 +958,10 @@
             }
           ]
         }
-      }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'digitalTwins')]"
+      ]
     },
     {
       "type": "Microsoft.Resources/deployments",
