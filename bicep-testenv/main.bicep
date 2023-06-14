@@ -159,6 +159,12 @@ resource IoTHub 'Microsoft.Devices/IotHubs@2021-07-02' = {
     name: skuName
     capacity: skuUnits
   }
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${uami.id}': {}
+    }
+  }
   properties: {
     eventHubEndpoints: {
       events: {
