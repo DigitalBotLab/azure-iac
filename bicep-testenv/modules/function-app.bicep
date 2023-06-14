@@ -18,9 +18,6 @@ param storageAccountType string = 'Standard_LRS'
 @description('Location for all resources.')
 param location string
 
-@description('Name of the LAW workspace')
-param logAnalyticsName string
-
 @description('The language worker runtime to load in the function app.')
 @allowed([
   'node'
@@ -29,9 +26,25 @@ param logAnalyticsName string
 ])
 param runtime string = 'dotnet'
 
+@description('User Managed Identity Name to use')
+param managedIdentityName string
+
+@description('User Managed Identity Resource Group')
+param managedIdentityGroup string
+
+@description('Name of the LAW workspace')
+param logAnalyticsName string
+
 var hostingPlanName = '${functionAppName}-plan'
 var applicationInsightsName = '${functionAppName}-appi'
 var functionWorkerRuntime = runtime
+
+// create user assigned managed identity
+resource uami 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' existing = {
+  name: managedIdentityName
+  scope: resourceGroup(managedIdentityGroup)
+}
+
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
   name: storageAccountName
@@ -61,9 +74,12 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
   location: location
   kind: 'functionapp'
   identity: {
-    type: 'SystemAssigned'
-  }
-  properties: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+        '${uami.id}': {}
+      }
+    }
+    properties: {
     serverFarmId: hostingPlan.id
     siteConfig: {
       appSettings: [
@@ -129,6 +145,3 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-03
     }
   })
 }
-
-output managed_identity string = functionApp.identity.principalId
-

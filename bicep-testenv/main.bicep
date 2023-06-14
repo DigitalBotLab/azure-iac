@@ -269,6 +269,8 @@ module functionApp 'modules/function-app.bicep' = {
     location: location
     storageAccountName: funcStorageAccountName
     logAnalyticsName: logAnalyticsName
+    managedIdentityName: uaminame
+    managedIdentityGroup: resourceGroup().name
   }
 }
 

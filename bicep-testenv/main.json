@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.18.4.5664",
-      "templateHash": "14276304505543796813"
+      "templateHash": "18164019658395862656"
     }
   },
   "parameters": {
@@ -743,6 +743,12 @@
           },
           "logAnalyticsName": {
             "value": "[variables('logAnalyticsName')]"
+          },
+          "managedIdentityName": {
+            "value": "[variables('uaminame')]"
+          },
+          "managedIdentityGroup": {
+            "value": "[resourceGroup().name]"
           }
         },
         "template": {
@@ -752,7 +758,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.18.4.5664",
-              "templateHash": "15255289724749550330"
+              "templateHash": "5485357309859791047"
             }
           },
           "parameters": {
@@ -788,12 +794,6 @@
                 "description": "Location for all resources."
               }
             },
-            "logAnalyticsName": {
-              "type": "string",
-              "metadata": {
-                "description": "Name of the LAW workspace"
-              }
-            },
             "runtime": {
               "type": "string",
               "defaultValue": "dotnet",
@@ -804,6 +804,24 @@
               ],
               "metadata": {
                 "description": "The language worker runtime to load in the function app."
+              }
+            },
+            "managedIdentityName": {
+              "type": "string",
+              "metadata": {
+                "description": "User Managed Identity Name to use"
+              }
+            },
+            "managedIdentityGroup": {
+              "type": "string",
+              "metadata": {
+                "description": "User Managed Identity Resource Group"
+              }
+            },
+            "logAnalyticsName": {
+              "type": "string",
+              "metadata": {
+                "description": "Name of the LAW workspace"
               }
             }
           },
@@ -845,7 +863,10 @@
               "location": "[parameters('location')]",
               "kind": "functionapp",
               "identity": {
-                "type": "SystemAssigned"
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                  "[format('{0}', extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('managedIdentityGroup')), 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('managedIdentityName')))]": {}
+                }
               },
               "properties": {
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
@@ -922,13 +943,7 @@
                 }
               }
             }
-          ],
-          "outputs": {
-            "managed_identity": {
-              "type": "string",
-              "value": "[reference(resourceId('Microsoft.Web/sites', parameters('functionAppName')), '2021-03-01', 'full').identity.principalId]"
-            }
-          }
+          ]
         }
       }
     },
