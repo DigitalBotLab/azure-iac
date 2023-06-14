@@ -267,8 +267,8 @@ module functionApp 'modules/function-app.bicep' = {
   params: {
     functionAppName: functionName
     location: location
-    appInsightsLocation: location
     storageAccountName: funcStorageAccountName
+    logAnalyticsName: logAnalyticsName
   }
 }
 
