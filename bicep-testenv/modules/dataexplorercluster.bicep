@@ -41,7 +41,9 @@ resource adxCluster 'Microsoft.Kusto/Clusters@2022-11-11' = {
 
 // Creates database under the Azure Data Explorer cluster
 resource database 'Microsoft.Kusto/clusters/databases@2022-11-11' = {
-  name: '${adxCluster.name}/${databaseName}'
+  parent: adxCluster
+  name: databaseName
+  //name: '${adxCluster.name}/${databaseName}'
   location: location
   kind: 'ReadWrite'
   properties: {

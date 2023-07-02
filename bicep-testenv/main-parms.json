@@ -2,8 +2,8 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "project" :{
-      "value": "dts"
+    "project": {
+      "value": "project"
     },
     "adxTwinLifecycleEventsTableName": {
       "value": "AdtTwinLifecycleEvents"
@@ -19,6 +19,15 @@
     },
     "eventHubsNamespaceCapacity": {
       "value": 1
+    },
+    "vnetAddressPrefix": {
+      "value": "10.0.0.0/22"
+    },
+    "functionAddressPrefix": {
+      "value": "10.0.0.0/24"
+    },
+    "privateLinkAddressPrefix": {
+      "value": "10.0.1.0/24"
     },
     "clusterPlan": {
       "value": "Dev(No SLA)_Standard_D11_v2"
@@ -52,6 +61,15 @@
     },
     "location": {
       "value": null
+    },
+    "skuName": {
+      "value": "S1"
+    },
+    "skuUnits": {
+      "value": 1
+    },
+    "d2cPartitions": {
+      "value": 4
     }
   }
 }

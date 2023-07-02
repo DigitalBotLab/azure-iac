@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.18.4.5664",
-      "templateHash": "9267656700380854676"
+      "templateHash": "5925808720236501229"
     }
   },
   "parameters": {
@@ -207,12 +207,12 @@
     "unique": "[substring(uniqueString(resourceGroup().id), 0, 4)]",
     "adxClusterName": "[format('{0}-adx-{1}', parameters('project'), variables('unique'))]",
     "digitalTwinsName": "[format('{0}-twins-{1}', parameters('project'), variables('unique'))]",
-    "eventHubsNamespaceName": "[format('{0}-hubns-{1}', parameters('project'), variables('unique'))]",
-    "eventHubName": "[format('{0}-hub-{1}', parameters('project'), variables('unique'))]",
+    "eventHubsNamespaceName": "[format('{0}-twinns-{1}', parameters('project'), variables('unique'))]",
+    "eventHubName": "[format('{0}-twinhub-{1}', parameters('project'), variables('unique'))]",
     "databaseName": "[format('{0}-db-{1}', parameters('project'), variables('unique'))]",
+    "databaseTableName": "[format('{0}-dbtbl-{1}', parameters('project'), variables('unique'))]",
     "logAnalyticsName": "[format('{0}-law-{1}', parameters('project'), variables('unique'))]",
     "functionName": "[format('{0}-func-{1}', parameters('project'), variables('unique'))]",
-    "functionSubscription": "[format('{0}-funcsub-{1}', parameters('project'), variables('unique'))]",
     "virtualNetworkName": "[format('{0}-vnet-{1}', parameters('project'), variables('unique'))]",
     "privateLinkSubnetName": "PrivateLinkSubnet",
     "functionSubnetName": "FunctionSubnet",
@@ -329,28 +329,6 @@
       "dependsOn": [
         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
         "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('uaminame'))]"
-      ]
-    },
-    {
-      "type": "Microsoft.EventGrid/eventSubscriptions",
-      "apiVersion": "2020-06-01",
-      "name": "[variables('functionSubscription')]",
-      "properties": {
-        "destination": {
-          "endpointType": "AzureFunction",
-          "properties": {
-            "maxEventsPerBatch": 10,
-            "preferredBatchSizeInKilobytes": 64,
-            "resourceId": "[reference(resourceId('Microsoft.Resources/deployments', 'functionApp'), '2022-09-01').outputs.eventFunction.value]"
-          }
-        },
-        "eventDeliverySchema": "EventGridSchema",
-        "filter": {
-          "isSubjectCaseSensitive": false
-        }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'functionApp')]"
       ]
     },
     {
@@ -791,7 +769,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.18.4.5664",
-              "templateHash": "7315762726975619176"
+              "templateHash": "2189928247803747938"
             }
           },
           "parameters": {
@@ -940,7 +918,7 @@
                       "value": "[variables('functionWorkerRuntime')]"
                     },
                     {
-                      "name": "ADT_ENDPOINT",
+                      "name": "ADT_SERVICE_URL",
                       "value": "[format('https://{0}', parameters('digitalTwinsEndpoint'))]"
                     }
                   ],
@@ -1041,7 +1019,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.18.4.5664",
-              "templateHash": "4914709014961674589"
+              "templateHash": "17783310710835272837"
             }
           },
           "parameters": {
@@ -1126,6 +1104,150 @@
               "dependsOn": [
                 "[resourceId('Microsoft.EventHub/namespaces', parameters('eventHubsNamespaceName'))]"
               ]
+            },
+            {
+              "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
+              "apiVersion": "2021-11-01",
+              "name": "[format('{0}/{1}/{2}', parameters('eventHubsNamespaceName'), parameters('eventHubName'), 'listenpolicy')]",
+              "properties": {
+                "rights": [
+                  "Listen"
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('eventHubsNamespaceName'), parameters('eventHubName'))]"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "dataExlorerCluster",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "adxClusterName": {
+            "value": "[variables('adxClusterName')]"
+          },
+          "databaseName": {
+            "value": "[variables('databaseName')]"
+          },
+          "clusterPlan": {
+            "value": "[parameters('clusterPlan')]"
+          },
+          "clusterTier": {
+            "value": "[parameters('clusterTier')]"
+          },
+          "clusterCapacity": {
+            "value": "[parameters('clusterCapacity')]"
+          },
+          "hotCachePeriod": {
+            "value": "[parameters('hotCachePeriod')]"
+          },
+          "softDeletePeriod": {
+            "value": "[parameters('softDeletePeriod')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.18.4.5664",
+              "templateHash": "13630838280426707348"
+            }
+          },
+          "parameters": {
+            "adxClusterName": {
+              "type": "string",
+              "metadata": {
+                "description": "Name given to Azure Data Explorer cluster resource"
+              }
+            },
+            "databaseName": {
+              "type": "string",
+              "metadata": {
+                "description": "Name given to database"
+              }
+            },
+            "clusterPlan": {
+              "type": "string",
+              "metadata": {
+                "description": "Azure Data Explorer cluster SKU option"
+              }
+            },
+            "clusterCapacity": {
+              "type": "int",
+              "metadata": {
+                "description": "Azure Data Explorer cluster capacity"
+              }
+            },
+            "clusterTier": {
+              "type": "string",
+              "metadata": {
+                "description": "Azure Data Explorer cluster tier"
+              }
+            },
+            "hotCachePeriod": {
+              "type": "string",
+              "metadata": {
+                "description": "The time to keep database data in cache"
+              }
+            },
+            "softDeletePeriod": {
+              "type": "string",
+              "metadata": {
+                "description": "The time data is kept in database"
+              }
+            },
+            "location": {
+              "type": "string",
+              "metadata": {
+                "description": "Location of to be created resources"
+              }
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Kusto/clusters",
+              "apiVersion": "2022-11-11",
+              "name": "[parameters('adxClusterName')]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "capacity": "[parameters('clusterCapacity')]",
+                "name": "[parameters('clusterPlan')]",
+                "tier": "[parameters('clusterTier')]"
+              },
+              "identity": {
+                "type": "None"
+              },
+              "properties": {
+                "enableAutoStop": false
+              }
+            },
+            {
+              "type": "Microsoft.Kusto/clusters/databases",
+              "apiVersion": "2022-11-11",
+              "name": "[format('{0}/{1}', parameters('adxClusterName'), parameters('databaseName'))]",
+              "location": "[parameters('location')]",
+              "kind": "ReadWrite",
+              "properties": {
+                "hotCachePeriod": "[parameters('hotCachePeriod')]",
+                "softDeletePeriod": "[parameters('softDeletePeriod')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Kusto/clusters', parameters('adxClusterName'))]"
+              ]
             }
           ]
         }
@@ -1161,6 +1283,12 @@
           },
           "eventHubName": {
             "value": "[variables('eventHubName')]"
+          },
+          "adxClusterName": {
+            "value": "[variables('adxClusterName')]"
+          },
+          "databaseName": {
+            "value": "[variables('databaseName')]"
           }
         },
         "template": {
@@ -1170,7 +1298,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.18.4.5664",
-              "templateHash": "414859765316230981"
+              "templateHash": "16425317941959886824"
             }
           },
           "parameters": {
@@ -1204,6 +1332,18 @@
                 "description": "Existing event hub name"
               }
             },
+            "adxClusterName": {
+              "type": "string",
+              "metadata": {
+                "description": "Existing Azure Data Explorer cluster resource name"
+              }
+            },
+            "databaseName": {
+              "type": "string",
+              "metadata": {
+                "description": "Existing database name"
+              }
+            },
             "principalId": {
               "type": "string",
               "metadata": {
@@ -1220,8 +1360,7 @@
           "variables": {
             "azureRbacContributor": "b24988ac-6180-42a0-ab88-20f7382dd24c",
             "azureRbacAzureEventHubsDataOwner": "f526a384-b230-433a-b45c-95f59c4a2dec",
-            "azureRbacAzureDigitalTwinsDataOwner": "bcd981a7-7f74-457b-83e1-cceb9e632ffe",
-            "azureRbacAzureDigitalTwinsDataReader": "d57506d4-4c8d-48b1-8587-93c323f6a5a3"
+            "azureRbacAzureDigitalTwinsDataOwner": "bcd981a7-7f74-457b-83e1-cceb9e632ffe"
           },
           "resources": [
             {
@@ -1253,14 +1392,159 @@
                 "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('azureRbacAzureEventHubsDataOwner'))]",
                 "principalType": "ServicePrincipal"
               }
+            },
+            {
+              "type": "Microsoft.Kusto/clusters/databases/principalAssignments",
+              "apiVersion": "2022-11-11",
+              "name": "[format('{0}/{1}/{2}', split(format('{0}/{1}', parameters('adxClusterName'), parameters('databaseName')), '/')[0], split(format('{0}/{1}', parameters('adxClusterName'), parameters('databaseName')), '/')[1], guid(resourceId('Microsoft.Kusto/clusters/databases', split(format('{0}/{1}', parameters('adxClusterName'), parameters('databaseName')), '/')[0], split(format('{0}/{1}', parameters('adxClusterName'), parameters('databaseName')), '/')[1]), parameters('principalId'), 'Admin'))]",
+              "properties": {
+                "principalId": "[parameters('digitalTwinsIdentityPrincipalId')]",
+                "role": "Admin",
+                "tenantId": "[parameters('digitalTwinsIdentityTenantId')]",
+                "principalType": "App"
+              }
+            },
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2022-04-01",
+              "scope": "[format('Microsoft.Kusto/clusters/{0}/databases/{1}', split(format('{0}/{1}', parameters('adxClusterName'), parameters('databaseName')), '/')[0], split(format('{0}/{1}', parameters('adxClusterName'), parameters('databaseName')), '/')[1])]",
+              "name": "[guid(resourceId('Microsoft.Kusto/clusters/databases', split(format('{0}/{1}', parameters('adxClusterName'), parameters('databaseName')), '/')[0], split(format('{0}/{1}', parameters('adxClusterName'), parameters('databaseName')), '/')[1]), parameters('principalId'), variables('azureRbacContributor'))]",
+              "properties": {
+                "principalId": "[parameters('digitalTwinsIdentityPrincipalId')]",
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('azureRbacContributor'))]",
+                "principalType": "ServicePrincipal"
+              }
             }
           ]
         }
       },
       "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'dataExlorerCluster')]",
         "[resourceId('Microsoft.Resources/deployments', 'digitalTwins')]",
         "[resourceId('Microsoft.Resources/deployments', 'eventHub')]",
         "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('uaminame'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "tsdbConnection",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "digitalTwinsName": {
+            "value": "[variables('digitalTwinsName')]"
+          },
+          "eventHubsNamespaceName": {
+            "value": "[variables('eventHubsNamespaceName')]"
+          },
+          "eventHubName": {
+            "value": "[variables('eventHubName')]"
+          },
+          "adxClusterName": {
+            "value": "[variables('adxClusterName')]"
+          },
+          "adxTwinLifecycleEventsTableName": {
+            "value": "[parameters('adxTwinLifecycleEventsTableName')]"
+          },
+          "adxRelationshipLifecycleEventsTableName": {
+            "value": "[parameters('adxRelationshipLifecycleEventsTableName')]"
+          },
+          "databaseName": {
+            "value": "[variables('databaseName')]"
+          },
+          "databaseTableName": {
+            "value": "[variables('databaseTableName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.18.4.5664",
+              "templateHash": "4506235557580644563"
+            }
+          },
+          "parameters": {
+            "digitalTwinsName": {
+              "type": "string",
+              "metadata": {
+                "description": "Existing Digital Twin resource name"
+              }
+            },
+            "eventHubsNamespaceName": {
+              "type": "string",
+              "metadata": {
+                "description": "Existing Event Hubs namespace resource name"
+              }
+            },
+            "eventHubName": {
+              "type": "string",
+              "metadata": {
+                "description": "Existing event hub name"
+              }
+            },
+            "adxClusterName": {
+              "type": "string",
+              "metadata": {
+                "description": "Existing Azure Data Explorer cluster resource name"
+              }
+            },
+            "adxTwinLifecycleEventsTableName": {
+              "type": "string",
+              "metadata": {
+                "description": "Name given to twin lifecycle event table"
+              }
+            },
+            "adxRelationshipLifecycleEventsTableName": {
+              "type": "string",
+              "metadata": {
+                "description": "Name given to relationship lifecycle event table"
+              }
+            },
+            "databaseName": {
+              "type": "string",
+              "metadata": {
+                "description": "Existing database name"
+              }
+            },
+            "databaseTableName": {
+              "type": "string",
+              "metadata": {
+                "description": "Name given to table in database"
+              }
+            }
+          },
+          "variables": {
+            "eventHubEndpoint": "[format('sb://{0}.servicebus.windows.net', parameters('eventHubsNamespaceName'))]"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.DigitalTwins/digitalTwinsInstances/timeSeriesDatabaseConnections",
+              "apiVersion": "2023-01-31",
+              "name": "[format('{0}/{1}', parameters('digitalTwinsName'), parameters('databaseTableName'))]",
+              "properties": {
+                "connectionType": "AzureDataExplorer",
+                "adxEndpointUri": "[reference(resourceId('Microsoft.Kusto/clusters', parameters('adxClusterName')), '2022-11-11').uri]",
+                "adxDatabaseName": "[parameters('databaseName')]",
+                "adxTwinLifecycleEventsTableName": "[parameters('adxTwinLifecycleEventsTableName')]",
+                "adxRelationshipLifecycleEventsTableName": "[parameters('adxRelationshipLifecycleEventsTableName')]",
+                "eventHubEndpointUri": "[variables('eventHubEndpoint')]",
+                "eventHubEntityPath": "[parameters('eventHubName')]",
+                "adxResourceId": "[resourceId('Microsoft.Kusto/clusters', parameters('adxClusterName'))]",
+                "eventHubNamespaceResourceId": "[resourceId('Microsoft.EventHub/namespaces', parameters('eventHubsNamespaceName'))]"
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'roleAssignment')]"
       ]
     }
   ]

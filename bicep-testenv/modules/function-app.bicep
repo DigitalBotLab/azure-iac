@@ -115,7 +115,7 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
           value: functionWorkerRuntime
         }
         {
-          name: 'ADT_ENDPOINT'
+          name: 'ADT_SERVICE_URL'
           value: 'https://${digitalTwinsEndpoint}'
         }
       ]

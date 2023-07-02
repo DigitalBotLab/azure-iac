@@ -52,6 +52,5 @@ resource twinEndpoint 'Microsoft.DigitalTwins/digitalTwinsInstances/endpoints@20
   }
 }
 
-
 output id string = digitalTwins.id
 output endpoint string = digitalTwins.properties.hostName

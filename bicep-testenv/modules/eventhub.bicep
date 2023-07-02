@@ -44,9 +44,21 @@ resource eventHubsNamespace 'Microsoft.EventHub/namespaces@2021-11-01' = {
 
 // Creates an event hub in the Event Hubs namespace
 resource eventHub 'Microsoft.EventHub/namespaces/eventhubs@2021-11-01' = {
-  name: '${eventHubsNamespace.name}/${eventHubName}'
+ parent: eventHubsNamespace
+ name: eventHubName
+  //name: '${eventHubsNamespace.name}/${eventHubName}'
   properties: {
     messageRetentionInDays: retentionInDays
     partitionCount: partitionCount
+  }
+}
+
+resource eventHubAuthRule 'Microsoft.EventHub/namespaces/eventhubs/authorizationRules@2021-11-01' = {
+  name: 'listenpolicy'
+  parent: eventHub
+  properties: {
+    rights: [
+      'Listen'
+    ]
   }
 }
