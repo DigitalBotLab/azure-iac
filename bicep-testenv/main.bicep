@@ -75,9 +75,6 @@ param principalId string
 @description('The type of the given principal id')
 param principalType string
 
-@description('The id of the AAD Tenant')
-param tenantId string
-
 @allowed([
   'westcentralus'
   'westus2'
@@ -316,8 +313,8 @@ module roleAssignment 'modules/roleassignment.bicep' = {
     principalId: principalId
     principalType: principalType
     digitalTwinsName: digitalTwinsName
-    digitalTwinsIdentityPrincipalId: uami.properties.principalId
-    digitalTwinsIdentityTenantId: tenantId
+    digitalTwinsIdentityPrincipalId: digitalTwins.outputs.digitalTwinsIdentityPrincipalId
+    digitalTwinsIdentityTenantId: digitalTwins.outputs.digitalTwinsIdentityTenantId
     eventHubsNamespaceName: eventHubsNamespaceName
     eventHubName: eventHubName
     adxClusterName: adxClusterName

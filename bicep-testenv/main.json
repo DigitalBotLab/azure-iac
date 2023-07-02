@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.18.4.5664",
-      "templateHash": "5925808720236501229"
+      "templateHash": "8179387305039098005"
     }
   },
   "parameters": {
@@ -154,12 +154,6 @@
       "type": "string",
       "metadata": {
         "description": "The type of the given principal id"
-      }
-    },
-    "tenantId": {
-      "type": "string",
-      "metadata": {
-        "description": "The id of the AAD Tenant"
       }
     },
     "location": {
@@ -361,7 +355,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.18.4.5664",
-              "templateHash": "6073520765034248193"
+              "templateHash": "17545380009515106999"
             }
           },
           "parameters": {
@@ -439,6 +433,14 @@
             "endpoint": {
               "type": "string",
               "value": "[reference(resourceId('Microsoft.DigitalTwins/digitalTwinsInstances', parameters('digitalTwinsName')), '2022-10-31').hostName]"
+            },
+            "digitalTwinsIdentityPrincipalId": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.DigitalTwins/digitalTwinsInstances', parameters('digitalTwinsName')), '2022-10-31', 'full').identity.principalId]"
+            },
+            "digitalTwinsIdentityTenantId": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.DigitalTwins/digitalTwinsInstances', parameters('digitalTwinsName')), '2022-10-31', 'full').identity.tenantId]"
             }
           }
         }
@@ -1273,10 +1275,10 @@
             "value": "[variables('digitalTwinsName')]"
           },
           "digitalTwinsIdentityPrincipalId": {
-            "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('uaminame')), '2018-11-30').principalId]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'digitalTwins'), '2022-09-01').outputs.digitalTwinsIdentityPrincipalId.value]"
           },
           "digitalTwinsIdentityTenantId": {
-            "value": "[parameters('tenantId')]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'digitalTwins'), '2022-09-01').outputs.digitalTwinsIdentityTenantId.value]"
           },
           "eventHubsNamespaceName": {
             "value": "[variables('eventHubsNamespaceName')]"
@@ -1421,8 +1423,7 @@
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'dataExlorerCluster')]",
         "[resourceId('Microsoft.Resources/deployments', 'digitalTwins')]",
-        "[resourceId('Microsoft.Resources/deployments', 'eventHub')]",
-        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('uaminame'))]"
+        "[resourceId('Microsoft.Resources/deployments', 'eventHub')]"
       ]
     },
     {
