@@ -109,14 +109,11 @@ var adxClusterName = '${project}-adx-${unique}'
 var digitalTwinsName = '${project}-twins-${unique}'
 var eventHubsNamespaceName = '${project}-twinns-${unique}'
 var eventHubName = '${project}-twinhub-${unique}'
-//var eventHubsNamespaceNameTime = '${project}-timens-${unique}'
-//var eventHub2Name = '${project}-timehub-${unique}'
 var databaseName = '${project}-db-${unique}'
 var databaseTableName = '${project}-dbtbl-${unique}'
 
 var logAnalyticsName = '${project}-law-${unique}'
 var functionName = '${project}-func-${unique}'
-//var functionSubscription = '${project}-funcsub-${unique}'
 var virtualNetworkName = '${project}-vnet-${unique}'
 
 var privateLinkSubnetName = 'PrivateLinkSubnet'
@@ -297,22 +294,6 @@ module eventHub 'modules/eventhub.bicep' = {
   }
 }
 
-// Creates Event Hubs namespace and associated event hub for the time series data
-
-// module eventHub2 'modules/eventhub.bicep' = {
-//   name: 'eventHub2'
-//   params: {
-//     eventHubsNamespaceName: eventHubsNamespaceNameTime
-//     eventHubsNamespaceCapacity: eventHubsNamespaceCapacity
-//     eventHubsNamespacePlan: eventHubsNamespacePlan
-//     eventHubsNamespaceTier: eventHubsNamespaceTier
-//     eventHubName: eventHub2Name
-//     retentionInDays: retentionInDays
-//     partitionCount: partitionCount
-//     location: location
-//   }
-// }
-
 // Creates Azure Data Explorer cluster and database
 module dataExplorerCluster 'modules/dataexplorercluster.bicep' = {
   name: 'dataExlorerCluster'
@@ -348,7 +329,6 @@ module roleAssignment 'modules/roleassignment.bicep' = {
     dataExplorerCluster
   ]
 }
-
 
 // Creates time series data history connection
 module tsdbConnection 'modules/tsdbconnection.bicep' = {
