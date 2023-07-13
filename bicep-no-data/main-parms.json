@@ -1,0 +1,69 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "project": {
+      "value": "project"
+    },
+    "eventHubsNamespacePlan": {
+      "value": "Basic"
+    },
+    "eventHubsNamespaceTier": {
+      "value": "Basic"
+    },
+    "eventHubsNamespaceCapacity": {
+      "value": 1
+    },
+    "vnetAddressPrefix": {
+      "value": "10.0.0.0/22"
+    },
+    "functionAddressPrefix": {
+      "value": "10.0.0.0/24"
+    },
+    "privateLinkAddressPrefix": {
+      "value": "10.0.1.0/24"
+    },
+    "clusterPlan": {
+      "value": "Dev(No SLA)_Standard_D11_v2"
+    },
+    "clusterCapacity": {
+      "value": 1
+    },
+    "clusterTier": {
+      "value": "Basic"
+    },
+    "retentionInDays": {
+      "value": 1
+    },
+    "partitionCount": {
+      "value": 2
+    },
+    "hotCachePeriod": {
+      "value": "P30D"
+    },
+    "softDeletePeriod": {
+      "value": "P1Y"
+    },
+    "principalId": {
+      "value": null
+    },
+    "principalType": {
+      "value": null
+    },
+    "tenantId": {
+      "value": null
+    },
+    "location": {
+      "value": null
+    },
+    "skuName": {
+      "value": "S1"
+    },
+    "skuUnits": {
+      "value": 1
+    },
+    "d2cPartitions": {
+      "value": 4
+    }
+  }
+}

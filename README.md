@@ -19,8 +19,14 @@ To get started click the "Deploy to Azure" button below:
 **Digital Twins Starter template**
 (coming)
 
-**Digital Twins with IoT Hub Starter template**
+**Digital Twins with NO TimeSeries Data**
 
-[![Deploy To Azure](https://raw.githubusercontent.com/DigitalBotLab/azure-iac/main/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FDigitalBotLab%2Fazure-iac%2Fmain%2Fbicep-testenv%2Fmain.json)
+[![Deploy To Azure](https://raw.githubusercontent.com/DigitalBotLab/azure-iac/main/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FDigitalBotLab%2Fazure-iac%2Fmain%2Fbicep-no-data%2Fmain.json)
 
-[![Visualize](https://raw.githubusercontent.com/DigitalBotLab/azure-iac/main/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2FDigitalBotLab%2Fazure-iac%2Fmain%2Fbicep-testenv%2Fmain.json)
+[![Visualize](https://raw.githubusercontent.com/DigitalBotLab/azure-iac/main/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2FDigitalBotLab%2Fazure-iac%2Fmain%2Fbicep-no-data%2Fmain.json)
+
+**Digital Twins with TimeSeries Data - Higher cost**
+
+[![Deploy To Azure](https://raw.githubusercontent.com/DigitalBotLab/azure-iac/main/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FDigitalBotLab%2Fazure-iac%2Fmain%2Fbicep-tsd-data%2Fmain.json)
+
+[![Visualize](https://raw.githubusercontent.com/DigitalBotLab/azure-iac/main/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2FDigitalBotLab%2Fazure-iac%2Fmain%2Fbicep-tsd-data%2Fmain.json)
