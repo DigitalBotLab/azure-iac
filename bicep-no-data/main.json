@@ -5,13 +5,13 @@
     "_generator": {
       "name": "bicep",
       "version": "0.18.4.5664",
-      "templateHash": "11047337601591641177"
+      "templateHash": "3662033858131086698"
     }
   },
   "parameters": {
     "project": {
       "type": "string",
-      "defaultValue": "project",
+      "defaultValue": "prj",
       "metadata": {
         "description": "Name of the underlying project"
       }
@@ -89,6 +89,7 @@
     },
     "principalType": {
       "type": "string",
+      "defaultValue": "User",
       "metadata": {
         "description": "The type of the given principal id"
       }

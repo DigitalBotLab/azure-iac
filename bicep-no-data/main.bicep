@@ -1,5 +1,5 @@
 @description('Name of the underlying project')
-param project string = 'project'
+param project string = 'prj'
 
 @allowed([
   'Basic'
@@ -38,7 +38,7 @@ param partitionCount int = 2
 param principalId string
 
 @description('The type of the given principal id')
-param principalType string
+param principalType string = 'User'
 
 @allowed([
   'westcentralus'
