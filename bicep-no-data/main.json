@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.18.4.5664",
-      "templateHash": "3662033858131086698"
+      "templateHash": "11570224992106663022"
     }
   },
   "parameters": {
@@ -706,7 +706,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.18.4.5664",
-              "templateHash": "2189928247803747938"
+              "templateHash": "9714153748029829213"
             }
           },
           "parameters": {
@@ -817,10 +817,7 @@
               "location": "[parameters('location')]",
               "kind": "functionapp",
               "identity": {
-                "type": "UserAssigned",
-                "userAssignedIdentities": {
-                  "[format('{0}', extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('managedIdentityGroup')), 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('managedIdentityName')))]": {}
-                }
+                "type": "SystemAssigned"
               },
               "properties": {
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
@@ -906,6 +903,10 @@
             "eventFunction": {
               "type": "string",
               "value": "[format('{0}/functions/ProcessHubToDTEvents', resourceId('Microsoft.Web/sites', parameters('functionAppName')))]"
+            },
+            "functionIdentityPrincipalId": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Web/sites', parameters('functionAppName')), '2021-03-01', 'full').identity.principalId]"
             }
           }
         }
@@ -925,7 +926,7 @@
         "mode": "Incremental",
         "parameters": {
           "principalId": {
-            "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('uaminame')), '2018-11-30').principalId]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'functionApp'), '2022-09-01').outputs.functionIdentityPrincipalId.value]"
           },
           "roleId": {
             "value": "bcd981a7-7f74-457b-83e1-cceb9e632ffe"
@@ -985,8 +986,7 @@
       },
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'digitalTwins')]",
-        "[resourceId('Microsoft.Resources/deployments', 'functionApp')]",
-        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('uaminame'))]"
+        "[resourceId('Microsoft.Resources/deployments', 'functionApp')]"
       ]
     },
     {
