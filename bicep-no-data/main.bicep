@@ -241,7 +241,7 @@ module functionApp 'modules/function-app.bicep' = {
 module funcRoleAssignment 'modules/funcroleassignement.bicep' = {
   name: 'funcRoleAssignment'
   params: {
-    principalId: uami.properties.principalId
+    principalId: functionApp.outputs.functionIdentityPrincipalId
     roleId: 'bcd981a7-7f74-457b-83e1-cceb9e632ffe'
     digitalTwinsInstanceName: digitalTwinsName
   }

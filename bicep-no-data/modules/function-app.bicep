@@ -76,11 +76,8 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
   name: functionAppName
   location: location
   kind: 'functionapp'
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-        '${uami.id}': {}
-      }
+    identity: {
+      type: 'SystemAssigned'
     }
     properties: {
     serverFarmId: hostingPlan.id
@@ -154,5 +151,5 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-03
 }
 
 output eventFunction string = '${functionApp.id}/functions/ProcessHubToDTEvents'
-
+output functionIdentityPrincipalId string = functionApp.identity.principalId
 
