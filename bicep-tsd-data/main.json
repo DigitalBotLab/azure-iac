@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.19.5.34762",
-      "templateHash": "9700933037036668662"
+      "templateHash": "9106650549024208016"
     }
   },
   "parameters": {
@@ -1195,15 +1195,6 @@
           "eventHubsNamespaceName": {
             "value": "[variables('eventHubsNamespaceName')]"
           },
-          "eventHubsNamespaceCapacity": {
-            "value": "[parameters('eventHubsNamespaceCapacity')]"
-          },
-          "eventHubsNamespacePlan": {
-            "value": "[parameters('eventHubsNamespacePlan')]"
-          },
-          "eventHubsNamespaceTier": {
-            "value": "[parameters('eventHubsNamespaceTier')]"
-          },
           "eventHubName": {
             "value": "[variables('eventHubEndpoint')]"
           },
@@ -1212,9 +1203,6 @@
           },
           "partitionCount": {
             "value": "[parameters('partitionCount')]"
-          },
-          "location": {
-            "value": "[parameters('location')]"
           }
         },
         "template": {
@@ -1224,7 +1212,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.19.5.34762",
-              "templateHash": "6278800970624752516"
+              "templateHash": "9970554005548785617"
             }
           },
           "parameters": {
@@ -1240,33 +1228,6 @@
                 "description": "Name given to event hub"
               }
             },
-            "eventHubsNamespacePlan": {
-              "type": "string",
-              "metadata": {
-                "description": "Event Hubs namespace SKU option"
-              },
-              "allowedValues": [
-                "Basic",
-                "Premium",
-                "Standard"
-              ]
-            },
-            "eventHubsNamespaceTier": {
-              "type": "string",
-              "metadata": {
-                "description": "Event Hubs namespace SKU billing tier"
-              },
-              "allowedValues": [
-                "Basic",
-                "Standard"
-              ]
-            },
-            "eventHubsNamespaceCapacity": {
-              "type": "int",
-              "metadata": {
-                "description": "Event Hubs throughput units"
-              }
-            },
             "retentionInDays": {
               "type": "int",
               "metadata": {
@@ -1278,26 +1239,9 @@
               "metadata": {
                 "description": "Number of partitions to create in event hub"
               }
-            },
-            "location": {
-              "type": "string",
-              "metadata": {
-                "description": "Location of to be created resources"
-              }
             }
           },
           "resources": [
-            {
-              "type": "Microsoft.EventHub/namespaces",
-              "apiVersion": "2021-11-01",
-              "name": "[parameters('eventHubsNamespaceName')]",
-              "location": "[parameters('location')]",
-              "sku": {
-                "capacity": "[parameters('eventHubsNamespaceCapacity')]",
-                "name": "[parameters('eventHubsNamespacePlan')]",
-                "tier": "[parameters('eventHubsNamespaceTier')]"
-              }
-            },
             {
               "type": "Microsoft.EventHub/namespaces/eventhubs",
               "apiVersion": "2021-11-01",
@@ -1305,10 +1249,7 @@
               "properties": {
                 "messageRetentionInDays": "[parameters('retentionInDays')]",
                 "partitionCount": "[parameters('partitionCount')]"
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.EventHub/namespaces', parameters('eventHubsNamespaceName'))]"
-              ]
+              }
             },
             {
               "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",

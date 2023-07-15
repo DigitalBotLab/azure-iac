@@ -304,18 +304,14 @@ module eventHub 'modules/eventhub.bicep' = {
   }
 }
 
-module eventHub2 'modules/eventhub.bicep' = {
+module eventHub2 'modules/eventhubexistingns.bicep' = {
   name: 'eventHub2'
   params: {
     eventHubsNamespaceName: eventHubsNamespaceName
-    eventHubsNamespaceCapacity: eventHubsNamespaceCapacity
-    eventHubsNamespacePlan: eventHubsNamespacePlan
-    eventHubsNamespaceTier: eventHubsNamespaceTier
     eventHubName: eventHubEndpoint
     retentionInDays: retentionInDays
     partitionCount: partitionCount
-    location: location
-  }
+ }
 }
 
 // Creates Azure Data Explorer cluster and database
