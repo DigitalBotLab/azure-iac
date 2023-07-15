@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.18.4.5664",
-      "templateHash": "11570224992106663022"
+      "version": "0.19.5.34762",
+      "templateHash": "16325574061907015803"
     }
   },
   "parameters": {
@@ -289,8 +289,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.18.4.5664",
-              "templateHash": "17545380009515106999"
+              "version": "0.19.5.34762",
+              "templateHash": "13598580982225314352"
             }
           },
           "parameters": {
@@ -422,8 +422,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.18.4.5664",
-              "templateHash": "10710918550351307384"
+              "version": "0.19.5.34762",
+              "templateHash": "2523901324319638915"
             }
           },
           "parameters": {
@@ -549,8 +549,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.18.4.5664",
-              "templateHash": "3253194119830244869"
+              "version": "0.19.5.34762",
+              "templateHash": "10250375190971308770"
             }
           },
           "parameters": {
@@ -689,12 +689,6 @@
           "logAnalyticsName": {
             "value": "[variables('logAnalyticsName')]"
           },
-          "managedIdentityName": {
-            "value": "[variables('uaminame')]"
-          },
-          "managedIdentityGroup": {
-            "value": "[resourceGroup().name]"
-          },
           "digitalTwinsEndpoint": {
             "value": "[reference(resourceId('Microsoft.Resources/deployments', 'digitalTwins'), '2022-09-01').outputs.endpoint.value]"
           }
@@ -705,8 +699,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.18.4.5664",
-              "templateHash": "9714153748029829213"
+              "version": "0.19.5.34762",
+              "templateHash": "7668324270810328492"
             }
           },
           "parameters": {
@@ -758,18 +752,6 @@
               ],
               "metadata": {
                 "description": "The language worker runtime to load in the function app."
-              }
-            },
-            "managedIdentityName": {
-              "type": "string",
-              "metadata": {
-                "description": "User Managed Identity Name to use"
-              }
-            },
-            "managedIdentityGroup": {
-              "type": "string",
-              "metadata": {
-                "description": "User Managed Identity Resource Group"
               }
             },
             "logAnalyticsName": {
@@ -941,8 +923,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.18.4.5664",
-              "templateHash": "4040703783308549650"
+              "version": "0.19.5.34762",
+              "templateHash": "13152608178899028272"
             }
           },
           "parameters": {
@@ -1030,8 +1012,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.18.4.5664",
-              "templateHash": "17783310710835272837"
+              "version": "0.19.5.34762",
+              "templateHash": "6278800970624752516"
             }
           },
           "parameters": {
@@ -1169,8 +1151,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.18.4.5664",
-              "templateHash": "17910364123611293252"
+              "version": "0.19.5.34762",
+              "templateHash": "9232718599328371631"
             }
           },
           "parameters": {

@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.18.4.5664",
-      "templateHash": "8179387305039098005"
+      "version": "0.19.5.34762",
+      "templateHash": "452646313434993843"
     }
   },
   "parameters": {
@@ -354,8 +354,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.18.4.5664",
-              "templateHash": "17545380009515106999"
+              "version": "0.19.5.34762",
+              "templateHash": "13598580982225314352"
             }
           },
           "parameters": {
@@ -487,8 +487,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.18.4.5664",
-              "templateHash": "10710918550351307384"
+              "version": "0.19.5.34762",
+              "templateHash": "2523901324319638915"
             }
           },
           "parameters": {
@@ -614,8 +614,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.18.4.5664",
-              "templateHash": "3253194119830244869"
+              "version": "0.19.5.34762",
+              "templateHash": "10250375190971308770"
             }
           },
           "parameters": {
@@ -754,12 +754,6 @@
           "logAnalyticsName": {
             "value": "[variables('logAnalyticsName')]"
           },
-          "managedIdentityName": {
-            "value": "[variables('uaminame')]"
-          },
-          "managedIdentityGroup": {
-            "value": "[resourceGroup().name]"
-          },
           "digitalTwinsEndpoint": {
             "value": "[reference(resourceId('Microsoft.Resources/deployments', 'digitalTwins'), '2022-09-01').outputs.endpoint.value]"
           }
@@ -770,8 +764,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.18.4.5664",
-              "templateHash": "2189928247803747938"
+              "version": "0.19.5.34762",
+              "templateHash": "7668324270810328492"
             }
           },
           "parameters": {
@@ -825,18 +819,6 @@
                 "description": "The language worker runtime to load in the function app."
               }
             },
-            "managedIdentityName": {
-              "type": "string",
-              "metadata": {
-                "description": "User Managed Identity Name to use"
-              }
-            },
-            "managedIdentityGroup": {
-              "type": "string",
-              "metadata": {
-                "description": "User Managed Identity Resource Group"
-              }
-            },
             "logAnalyticsName": {
               "type": "string",
               "metadata": {
@@ -882,10 +864,7 @@
               "location": "[parameters('location')]",
               "kind": "functionapp",
               "identity": {
-                "type": "UserAssigned",
-                "userAssignedIdentities": {
-                  "[format('{0}', extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('managedIdentityGroup')), 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('managedIdentityName')))]": {}
-                }
+                "type": "SystemAssigned"
               },
               "properties": {
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
@@ -971,12 +950,90 @@
             "eventFunction": {
               "type": "string",
               "value": "[format('{0}/functions/ProcessHubToDTEvents', resourceId('Microsoft.Web/sites', parameters('functionAppName')))]"
+            },
+            "functionIdentityPrincipalId": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Web/sites', parameters('functionAppName')), '2021-03-01', 'full').identity.principalId]"
             }
           }
         }
       },
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'digitalTwins')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "funcRoleAssignment",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "principalId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'functionApp'), '2022-09-01').outputs.functionIdentityPrincipalId.value]"
+          },
+          "roleId": {
+            "value": "bcd981a7-7f74-457b-83e1-cceb9e632ffe"
+          },
+          "digitalTwinsInstanceName": {
+            "value": "[variables('digitalTwinsName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.19.5.34762",
+              "templateHash": "13152608178899028272"
+            }
+          },
+          "parameters": {
+            "principalId": {
+              "type": "string",
+              "metadata": {
+                "description": "The AAD principal id of for the role-assignment."
+              }
+            },
+            "roleId": {
+              "type": "string",
+              "allowedValues": [
+                "bcd981a7-7f74-457b-83e1-cceb9e632ffe",
+                "d57506d4-4c8d-48b1-8587-93c323f6a5a3"
+              ],
+              "metadata": {
+                "description": "The role id for the role-assignment."
+              }
+            },
+            "digitalTwinsInstanceName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name of the Azure Digital Twins instance."
+              }
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2022-04-01",
+              "scope": "[format('Microsoft.DigitalTwins/digitalTwinsInstances/{0}', parameters('digitalTwinsInstanceName'))]",
+              "name": "[guid(uniqueString(parameters('principalId'), parameters('roleId'), resourceId('Microsoft.DigitalTwins/digitalTwinsInstances', parameters('digitalTwinsInstanceName'))))]",
+              "properties": {
+                "principalId": "[parameters('principalId')]",
+                "principalType": "ServicePrincipal",
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefintions', parameters('roleId'))]"
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'digitalTwins')]",
+        "[resourceId('Microsoft.Resources/deployments', 'functionApp')]"
       ]
     },
     {
@@ -1020,8 +1077,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.18.4.5664",
-              "templateHash": "17783310710835272837"
+              "version": "0.19.5.34762",
+              "templateHash": "6278800970624752516"
             }
           },
           "parameters": {
@@ -1165,8 +1222,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.18.4.5664",
-              "templateHash": "13630838280426707348"
+              "version": "0.19.5.34762",
+              "templateHash": "11488965490297733842"
             }
           },
           "parameters": {
@@ -1299,8 +1356,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.18.4.5664",
-              "templateHash": "16425317941959886824"
+              "version": "0.19.5.34762",
+              "templateHash": "12367163551357773915"
             }
           },
           "parameters": {
@@ -1467,8 +1524,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.18.4.5664",
-              "templateHash": "4506235557580644563"
+              "version": "0.19.5.34762",
+              "templateHash": "1253977732685418783"
             }
           },
           "parameters": {

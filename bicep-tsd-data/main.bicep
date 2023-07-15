@@ -270,10 +270,22 @@ module functionApp 'modules/function-app.bicep' = {
     location: location
     storageAccountName: funcStorageAccountName
     logAnalyticsName: logAnalyticsName
-    managedIdentityName: uaminame
-    managedIdentityGroup: resourceGroup().name
     digitalTwinsEndpoint: digitalTwins.outputs.endpoint
   }
+}
+
+
+module funcRoleAssignment 'modules/funcroleassignement.bicep' = {
+  name: 'funcRoleAssignment'
+  params: {
+    principalId: functionApp.outputs.functionIdentityPrincipalId
+    roleId: 'bcd981a7-7f74-457b-83e1-cceb9e632ffe'
+    digitalTwinsInstanceName: digitalTwinsName
+  }
+  dependsOn: [
+    functionApp
+    digitalTwins
+  ]
 }
 
 // Creates Event Hubs namespace and associated event hub

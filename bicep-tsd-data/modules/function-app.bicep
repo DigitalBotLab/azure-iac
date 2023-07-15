@@ -29,24 +29,12 @@ param location string
 ])
 param runtime string = 'dotnet'
 
-@description('User Managed Identity Name to use')
-param managedIdentityName string
-
-@description('User Managed Identity Resource Group')
-param managedIdentityGroup string
-
 @description('Name of the LAW workspace')
 param logAnalyticsName string
 
 var hostingPlanName = '${functionAppName}-plan'
 var applicationInsightsName = '${functionAppName}-appi'
 var functionWorkerRuntime = runtime
-
-// create user assigned managed identity
-resource uami 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' existing = {
-  name: managedIdentityName
-  scope: resourceGroup(managedIdentityGroup)
-}
 
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
@@ -76,11 +64,8 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
   name: functionAppName
   location: location
   kind: 'functionapp'
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-        '${uami.id}': {}
-      }
+    identity: {
+      type: 'SystemAssigned'
     }
     properties: {
     serverFarmId: hostingPlan.id
@@ -154,5 +139,5 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-03
 }
 
 output eventFunction string = '${functionApp.id}/functions/ProcessHubToDTEvents'
-
+output functionIdentityPrincipalId string = functionApp.identity.principalId
 

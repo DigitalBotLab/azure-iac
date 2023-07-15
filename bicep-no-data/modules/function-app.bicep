@@ -29,24 +29,12 @@ param location string
 ])
 param runtime string = 'dotnet'
 
-@description('User Managed Identity Name to use')
-param managedIdentityName string
-
-@description('User Managed Identity Resource Group')
-param managedIdentityGroup string
-
 @description('Name of the LAW workspace')
 param logAnalyticsName string
 
 var hostingPlanName = '${functionAppName}-plan'
 var applicationInsightsName = '${functionAppName}-appi'
 var functionWorkerRuntime = runtime
-
-// create user assigned managed identity
-resource uami 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' existing = {
-  name: managedIdentityName
-  scope: resourceGroup(managedIdentityGroup)
-}
 
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
