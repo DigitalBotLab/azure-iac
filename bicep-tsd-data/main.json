@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.19.5.34762",
-      "templateHash": "452646313434993843"
+      "templateHash": "9700933037036668662"
     }
   },
   "parameters": {
@@ -203,6 +203,7 @@
     "digitalTwinsName": "[format('{0}-twins-{1}', parameters('project'), variables('unique'))]",
     "eventHubsNamespaceName": "[format('{0}-twinns-{1}', parameters('project'), variables('unique'))]",
     "eventHubName": "[format('{0}-twinhub-{1}', parameters('project'), variables('unique'))]",
+    "eventHubEndpoint": "[format('{0}-twinend-{1}', parameters('project'), variables('unique'))]",
     "databaseName": "[format('{0}-db-{1}', parameters('project'), variables('unique'))]",
     "databaseTableName": "[format('{0}-dbtbl-{1}', parameters('project'), variables('unique'))]",
     "logAnalyticsName": "[format('{0}-law-{1}', parameters('project'), variables('unique'))]",
@@ -342,7 +343,7 @@
             "value": "[parameters('location')]"
           },
           "eventHubName": {
-            "value": "[variables('eventHubName')]"
+            "value": "[variables('eventHubEndpoint')]"
           },
           "eventHubNamespace": {
             "value": "[variables('eventHubsNamespaceName')]"
@@ -1184,6 +1185,151 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
+      "name": "eventHub2",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "eventHubsNamespaceName": {
+            "value": "[variables('eventHubsNamespaceName')]"
+          },
+          "eventHubsNamespaceCapacity": {
+            "value": "[parameters('eventHubsNamespaceCapacity')]"
+          },
+          "eventHubsNamespacePlan": {
+            "value": "[parameters('eventHubsNamespacePlan')]"
+          },
+          "eventHubsNamespaceTier": {
+            "value": "[parameters('eventHubsNamespaceTier')]"
+          },
+          "eventHubName": {
+            "value": "[variables('eventHubEndpoint')]"
+          },
+          "retentionInDays": {
+            "value": "[parameters('retentionInDays')]"
+          },
+          "partitionCount": {
+            "value": "[parameters('partitionCount')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.19.5.34762",
+              "templateHash": "6278800970624752516"
+            }
+          },
+          "parameters": {
+            "eventHubsNamespaceName": {
+              "type": "string",
+              "metadata": {
+                "description": "Name of Event Hubs namespace"
+              }
+            },
+            "eventHubName": {
+              "type": "string",
+              "metadata": {
+                "description": "Name given to event hub"
+              }
+            },
+            "eventHubsNamespacePlan": {
+              "type": "string",
+              "metadata": {
+                "description": "Event Hubs namespace SKU option"
+              },
+              "allowedValues": [
+                "Basic",
+                "Premium",
+                "Standard"
+              ]
+            },
+            "eventHubsNamespaceTier": {
+              "type": "string",
+              "metadata": {
+                "description": "Event Hubs namespace SKU billing tier"
+              },
+              "allowedValues": [
+                "Basic",
+                "Standard"
+              ]
+            },
+            "eventHubsNamespaceCapacity": {
+              "type": "int",
+              "metadata": {
+                "description": "Event Hubs throughput units"
+              }
+            },
+            "retentionInDays": {
+              "type": "int",
+              "metadata": {
+                "description": "Number of days to retain data in event hub"
+              }
+            },
+            "partitionCount": {
+              "type": "int",
+              "metadata": {
+                "description": "Number of partitions to create in event hub"
+              }
+            },
+            "location": {
+              "type": "string",
+              "metadata": {
+                "description": "Location of to be created resources"
+              }
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.EventHub/namespaces",
+              "apiVersion": "2021-11-01",
+              "name": "[parameters('eventHubsNamespaceName')]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "capacity": "[parameters('eventHubsNamespaceCapacity')]",
+                "name": "[parameters('eventHubsNamespacePlan')]",
+                "tier": "[parameters('eventHubsNamespaceTier')]"
+              }
+            },
+            {
+              "type": "Microsoft.EventHub/namespaces/eventhubs",
+              "apiVersion": "2021-11-01",
+              "name": "[format('{0}/{1}', parameters('eventHubsNamespaceName'), parameters('eventHubName'))]",
+              "properties": {
+                "messageRetentionInDays": "[parameters('retentionInDays')]",
+                "partitionCount": "[parameters('partitionCount')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('eventHubsNamespaceName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
+              "apiVersion": "2021-11-01",
+              "name": "[format('{0}/{1}/{2}', parameters('eventHubsNamespaceName'), parameters('eventHubName'), 'listenpolicy')]",
+              "properties": {
+                "rights": [
+                  "Listen"
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('eventHubsNamespaceName'), parameters('eventHubName'))]"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
       "name": "dataExlorerCluster",
       "properties": {
         "expressionEvaluationOptions": {
@@ -1343,6 +1489,9 @@
           "eventHubName": {
             "value": "[variables('eventHubName')]"
           },
+          "eventHubDataName": {
+            "value": "[variables('eventHubEndpoint')]"
+          },
           "adxClusterName": {
             "value": "[variables('adxClusterName')]"
           },
@@ -1357,7 +1506,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.19.5.34762",
-              "templateHash": "12367163551357773915"
+              "templateHash": "3741108687571554529"
             }
           },
           "parameters": {
@@ -1386,6 +1535,12 @@
               }
             },
             "eventHubName": {
+              "type": "string",
+              "metadata": {
+                "description": "Existing event hub name"
+              }
+            },
+            "eventHubDataName": {
               "type": "string",
               "metadata": {
                 "description": "Existing event hub name"
@@ -1446,6 +1601,16 @@
               "type": "Microsoft.Authorization/roleAssignments",
               "apiVersion": "2022-04-01",
               "name": "[guid(resourceId('Microsoft.EventHub/namespaces/eventhubs', split(format('{0}/{1}', parameters('eventHubsNamespaceName'), parameters('eventHubName')), '/')[0], split(format('{0}/{1}', parameters('eventHubsNamespaceName'), parameters('eventHubName')), '/')[1]), parameters('principalId'), variables('azureRbacAzureEventHubsDataOwner'))]",
+              "properties": {
+                "principalId": "[parameters('digitalTwinsIdentityPrincipalId')]",
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('azureRbacAzureEventHubsDataOwner'))]",
+                "principalType": "ServicePrincipal"
+              }
+            },
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2022-04-01",
+              "name": "[guid(resourceId('Microsoft.EventHub/namespaces/eventhubs', split(format('{0}/{1}', parameters('eventHubsNamespaceName'), parameters('eventHubDataName')), '/')[0], split(format('{0}/{1}', parameters('eventHubsNamespaceName'), parameters('eventHubDataName')), '/')[1]), parameters('principalId'), variables('azureRbacAzureEventHubsDataOwner'))]",
               "properties": {
                 "principalId": "[parameters('digitalTwinsIdentityPrincipalId')]",
                 "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('azureRbacAzureEventHubsDataOwner'))]",

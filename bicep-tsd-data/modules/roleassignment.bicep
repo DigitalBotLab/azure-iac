@@ -13,6 +13,9 @@ param eventHubsNamespaceName string
 @description('Existing event hub name')
 param eventHubName string
 
+@description('Existing event hub name')
+param eventHubDataName string
+
 @description('Existing Azure Data Explorer cluster resource name')
 param adxClusterName string
 
@@ -38,6 +41,11 @@ resource digitalTwins 'Microsoft.DigitalTwins/digitalTwinsInstances@2022-10-31' 
 // Gets event hub in Event Hubs namespace
 resource eventhub 'Microsoft.EventHub/namespaces/eventhubs@2021-11-01' existing = {
   name: '${eventHubsNamespaceName}/${eventHubName}'
+}
+
+// Gets event hub in Event Hubs namespace
+resource eventhub2 'Microsoft.EventHub/namespaces/eventhubs@2021-11-01' existing = {
+  name: '${eventHubsNamespaceName}/${eventHubDataName}'
 }
 
 // Gets database under the Azure Data Explorer cluster
@@ -74,6 +82,18 @@ resource digitalTwinsToEventHubRoleAssignment 'Microsoft.Authorization/roleAssig
     principalType: 'ServicePrincipal'
   }
 }
+
+
+// Assigns Digital Twins resource data owner of event hub
+resource digitalTwinsToEventHubRoleAssignment2 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(eventhub2.id, principalId, azureRbacAzureEventHubsDataOwner)
+  properties: {
+    principalId: digitalTwinsIdentityPrincipalId
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', azureRbacAzureEventHubsDataOwner)
+    principalType: 'ServicePrincipal'
+  }
+}
+
 
 // Assigns Digital Twins resource admin assignment to database
 resource digitalTwinsToDatabasePrincipalAssignment 'Microsoft.Kusto/clusters/databases/principalAssignments@2022-11-11' = {
