@@ -13,6 +13,9 @@ param eventHubsNamespaceName string
 @description('Existing event hub name')
 param eventHubName string
 
+@description('Existing Event Hubs namespace resource name')
+param eventHubsDataNamespaceName string
+
 @description('Existing event hub name')
 param eventHubDataName string
 
@@ -45,7 +48,7 @@ resource eventhub 'Microsoft.EventHub/namespaces/eventhubs@2021-11-01' existing 
 
 // Gets event hub in Event Hubs namespace
 resource eventhub2 'Microsoft.EventHub/namespaces/eventhubs@2021-11-01' existing = {
-  name: '${eventHubsNamespaceName}/${eventHubDataName}'
+  name: '${eventHubsDataNamespaceName}/${eventHubDataName}'
 }
 
 // Gets database under the Azure Data Explorer cluster

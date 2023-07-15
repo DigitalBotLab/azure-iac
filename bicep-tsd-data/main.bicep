@@ -106,7 +106,9 @@ var adxClusterName = '${project}-adx-${unique}'
 var digitalTwinsName = '${project}-twins-${unique}'
 var eventHubsNamespaceName = '${project}-twinns-${unique}'
 var eventHubName = '${project}-twinhub-${unique}'
-var eventHubEndpoint = '${project}-twinend-${unique}'
+
+var eventHubsNamespaceName2 = '${project}-endns-${unique}'
+var eventHubName2 = '${project}-end-${unique}'
 var databaseName = '${project}-db-${unique}'
 var databaseTableName = '${project}-dbtbl-${unique}'
 
@@ -230,7 +232,7 @@ module digitalTwins 'modules/digitaltwins.bicep' = {
   params: {
     digitalTwinsName: digitalTwinsName
     location: location
-    eventHubName: eventHubEndpoint
+    eventHubName: eventHubName
     eventHubNamespace: eventHubsNamespaceName
   }
   dependsOn: [
@@ -304,14 +306,19 @@ module eventHub 'modules/eventhub.bicep' = {
   }
 }
 
-module eventHub2 'modules/eventhubexistingns.bicep' = {
+// Creates Event Hubs namespace and associated event hub
+module eventHub2 'modules/eventhub.bicep' = {
   name: 'eventHub2'
   params: {
-    eventHubsNamespaceName: eventHubsNamespaceName
-    eventHubName: eventHubEndpoint
+    eventHubsNamespaceName: eventHubsNamespaceName2
+    eventHubsNamespaceCapacity: eventHubsNamespaceCapacity
+    eventHubsNamespacePlan: eventHubsNamespacePlan
+    eventHubsNamespaceTier: eventHubsNamespaceTier
+    eventHubName: eventHubName2
     retentionInDays: retentionInDays
     partitionCount: partitionCount
- }
+    location: location
+  }
 }
 
 // Creates Azure Data Explorer cluster and database
@@ -340,7 +347,8 @@ module roleAssignment 'modules/roleassignment.bicep' = {
     digitalTwinsIdentityTenantId: digitalTwins.outputs.digitalTwinsIdentityTenantId
     eventHubsNamespaceName: eventHubsNamespaceName
     eventHubName: eventHubName
-    eventHubDataName: eventHubEndpoint
+    eventHubsDataNamespaceName: eventHubsNamespaceName2
+    eventHubDataName: eventHubName2
     adxClusterName: adxClusterName
     databaseName: databaseName
   }
