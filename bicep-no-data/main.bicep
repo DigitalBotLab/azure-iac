@@ -70,7 +70,6 @@ var unique = substring(uniqueString(resourceGroup().id), 0, 4)
 var digitalTwinsName = '${project}-twins-${unique}'
 var eventHubsNamespaceName = '${project}-twinns-${unique}'
 var eventHubName = '${project}-twinhub-${unique}'
-var eventHubName2 = '${project}-endhub-${unique}'
 
 var logAnalyticsName = '${project}-law-${unique}'
 var functionName = '${project}-func-${unique}'
@@ -259,7 +258,6 @@ module eventHub 'modules/eventhub.bicep' = {
     eventHubsNamespacePlan: eventHubsNamespacePlan
     eventHubsNamespaceTier: eventHubsNamespaceTier
     eventHubName: eventHubName
-    eventHubName2: eventHubName2
     retentionInDays: retentionInDays
     partitionCount: partitionCount
     location: location
