@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.19.5.34762",
-      "templateHash": "3377807760436579801"
+      "templateHash": "15866967492361780606"
     }
   },
   "parameters": {
@@ -203,7 +203,6 @@
     "digitalTwinsName": "[format('{0}-twins-{1}', parameters('project'), variables('unique'))]",
     "eventHubsNamespaceName": "[format('{0}-twinns-{1}', parameters('project'), variables('unique'))]",
     "eventHubName": "[format('{0}-twinhub-{1}', parameters('project'), variables('unique'))]",
-    "eventHubsNamespaceName2": "[format('{0}-endns-{1}', parameters('project'), variables('unique'))]",
     "eventHubName2": "[format('{0}-end-{1}', parameters('project'), variables('unique'))]",
     "databaseName": "[format('{0}-db-{1}', parameters('project'), variables('unique'))]",
     "databaseTableName": "[format('{0}-dbtbl-{1}', parameters('project'), variables('unique'))]",
@@ -1380,7 +1379,7 @@
             "value": "[variables('eventHubName')]"
           },
           "eventHubsDataNamespaceName": {
-            "value": "[variables('eventHubsNamespaceName2')]"
+            "value": "[variables('eventHubsNamespaceName')]"
           },
           "eventHubDataName": {
             "value": "[variables('eventHubName2')]"

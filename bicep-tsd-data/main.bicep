@@ -107,7 +107,6 @@ var digitalTwinsName = '${project}-twins-${unique}'
 var eventHubsNamespaceName = '${project}-twinns-${unique}'
 var eventHubName = '${project}-twinhub-${unique}'
 
-var eventHubsNamespaceName2 = '${project}-endns-${unique}'
 var eventHubName2 = '${project}-end-${unique}'
 var databaseName = '${project}-db-${unique}'
 var databaseTableName = '${project}-dbtbl-${unique}'
@@ -333,7 +332,7 @@ module roleAssignment 'modules/roleassignment.bicep' = {
     digitalTwinsIdentityTenantId: digitalTwins.outputs.digitalTwinsIdentityTenantId
     eventHubsNamespaceName: eventHubsNamespaceName
     eventHubName: eventHubName
-    eventHubsDataNamespaceName: eventHubsNamespaceName2
+    eventHubsDataNamespaceName: eventHubsNamespaceName
     eventHubDataName: eventHubName2
     adxClusterName: adxClusterName
     databaseName: databaseName
