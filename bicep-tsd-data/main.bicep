@@ -300,21 +300,7 @@ module eventHub 'modules/eventhub.bicep' = {
     eventHubsNamespacePlan: eventHubsNamespacePlan
     eventHubsNamespaceTier: eventHubsNamespaceTier
     eventHubName: eventHubName
-    retentionInDays: retentionInDays
-    partitionCount: partitionCount
-    location: location
-  }
-}
-
-// Creates Event Hubs namespace and associated event hub
-module eventHub2 'modules/eventhub.bicep' = {
-  name: 'eventHub2'
-  params: {
-    eventHubsNamespaceName: eventHubsNamespaceName2
-    eventHubsNamespaceCapacity: eventHubsNamespaceCapacity
-    eventHubsNamespacePlan: eventHubsNamespacePlan
-    eventHubsNamespaceTier: eventHubsNamespaceTier
-    eventHubName: eventHubName2
+    eventHubName2: eventHubName2
     retentionInDays: retentionInDays
     partitionCount: partitionCount
     location: location

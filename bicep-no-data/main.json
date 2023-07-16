@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.19.5.34762",
-      "templateHash": "16325574061907015803"
+      "templateHash": "5254796544230480469"
     }
   },
   "parameters": {
@@ -140,6 +140,7 @@
     "digitalTwinsName": "[format('{0}-twins-{1}', parameters('project'), variables('unique'))]",
     "eventHubsNamespaceName": "[format('{0}-twinns-{1}', parameters('project'), variables('unique'))]",
     "eventHubName": "[format('{0}-twinhub-{1}', parameters('project'), variables('unique'))]",
+    "eventHubName2": "[format('{0}-endhub-{1}', parameters('project'), variables('unique'))]",
     "logAnalyticsName": "[format('{0}-law-{1}', parameters('project'), variables('unique'))]",
     "functionName": "[format('{0}-func-{1}', parameters('project'), variables('unique'))]",
     "virtualNetworkName": "[format('{0}-vnet-{1}', parameters('project'), variables('unique'))]",
@@ -996,6 +997,9 @@
           "eventHubName": {
             "value": "[variables('eventHubName')]"
           },
+          "eventHubName2": {
+            "value": "[variables('eventHubName2')]"
+          },
           "retentionInDays": {
             "value": "[parameters('retentionInDays')]"
           },
@@ -1013,7 +1017,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.19.5.34762",
-              "templateHash": "6278800970624752516"
+              "templateHash": "2957345370440231753"
             }
           },
           "parameters": {
@@ -1024,6 +1028,12 @@
               }
             },
             "eventHubName": {
+              "type": "string",
+              "metadata": {
+                "description": "Name given to event hub"
+              }
+            },
+            "eventHubName2": {
               "type": "string",
               "metadata": {
                 "description": "Name given to event hub"
@@ -1110,6 +1120,31 @@
               },
               "dependsOn": [
                 "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('eventHubsNamespaceName'), parameters('eventHubName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.EventHub/namespaces/eventhubs",
+              "apiVersion": "2021-11-01",
+              "name": "[format('{0}/{1}', parameters('eventHubsNamespaceName'), parameters('eventHubName2'))]",
+              "properties": {
+                "messageRetentionInDays": "[parameters('retentionInDays')]",
+                "partitionCount": "[parameters('partitionCount')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('eventHubsNamespaceName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
+              "apiVersion": "2021-11-01",
+              "name": "[format('{0}/{1}/{2}', parameters('eventHubsNamespaceName'), parameters('eventHubName2'), 'listenpolicy')]",
+              "properties": {
+                "rights": [
+                  "Listen"
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('eventHubsNamespaceName'), parameters('eventHubName2'))]"
               ]
             }
           ]

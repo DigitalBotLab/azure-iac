@@ -4,6 +4,9 @@ param eventHubsNamespaceName string
 @description('Name given to event hub')
 param eventHubName string
 
+@description('Name given to event hub')
+param eventHubName2 string
+
 @allowed([
   'Basic'
   'Premium'
@@ -62,3 +65,26 @@ resource eventHubAuthRule 'Microsoft.EventHub/namespaces/eventhubs/authorization
     ]
   }
 }
+
+// Creates an event hub in the Event Hubs namespace
+resource eventHub2 'Microsoft.EventHub/namespaces/eventhubs@2021-11-01' = {
+  parent: eventHubsNamespace
+  name: eventHubName2
+   //name: '${eventHubsNamespace.name}/${eventHubName}'
+   properties: {
+     messageRetentionInDays: retentionInDays
+     partitionCount: partitionCount
+   }
+ }
+ 
+ resource eventHubAuthRule2 'Microsoft.EventHub/namespaces/eventhubs/authorizationRules@2021-11-01' = {
+   name: 'listenpolicy'
+   parent: eventHub2
+   properties: {
+     rights: [
+       'Listen'
+     ]
+   }
+ }
+ 
+
