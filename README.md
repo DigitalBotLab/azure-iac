@@ -16,9 +16,7 @@ Make sure you have an Azure account, and a subscription already setup.
 
 To get started click the "Deploy to Azure" button below:
 
-**Digital Twins Starter template**
-(coming)
-
+---
 **Digital Twins with NO TimeSeries Data**
 
 [![Deploy To Azure](https://raw.githubusercontent.com/DigitalBotLab/azure-iac/main/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FDigitalBotLab%2Fazure-iac%2Fmain%2Fbicep-no-data%2Fmain.json)
