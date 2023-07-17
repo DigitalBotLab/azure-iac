@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.19.5.34762",
-      "templateHash": "1492133556256484360"
+      "templateHash": "13520936379573325074"
     }
   },
   "parameters": {
@@ -255,7 +255,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.19.5.34762",
-              "templateHash": "13598580982225314352"
+              "templateHash": "17236641791367571237"
             }
           },
           "parameters": {
@@ -313,12 +313,9 @@
               "name": "[format('{0}/{1}', parameters('digitalTwinsName'), 'Endpoint01')]",
               "properties": {
                 "authenticationType": "IdentityBased",
-                "identity": {
-                  "type": "SystemAssigned"
-                },
                 "endpointType": "EventHub",
                 "endpointUri": "[format('sb://{0}.servicebus.windows.net', parameters('eventHubNamespace'))]",
-                "entityPath": "[format('{0}/{1}', parameters('eventHubNamespace'), parameters('eventHubName'))]"
+                "entityPath": "[parameters('eventHubName')]"
               },
               "dependsOn": [
                 "[resourceId('Microsoft.DigitalTwins/digitalTwinsInstances', parameters('digitalTwinsName'))]"

@@ -43,12 +43,12 @@ resource twinEndpoint 'Microsoft.DigitalTwins/digitalTwinsInstances/endpoints@20
   parent: digitalTwins
   properties: {
     authenticationType: 'IdentityBased'
-    identity: {
-      type: 'SystemAssigned'
-    }
+    // identity: {
+    //   type: 'SystemAssigned'
+    // }
     endpointType: 'EventHub'   
     endpointUri: 'sb://${eventHubsNamespace.name}.servicebus.windows.net'
-    entityPath: '${eventHubsNamespace.name}/${eventHubName}'
+    entityPath: eventHubName
   }
 }
 

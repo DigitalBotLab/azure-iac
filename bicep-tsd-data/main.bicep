@@ -107,17 +107,16 @@ var digitalTwinsName = '${project}-twins-${unique}'
 var eventHubsNamespaceName = '${project}-twinns-${unique}'
 var eventHubName = '${project}-twinhub-${unique}'
 
+var eventHubsNamespaceName2 = '${project}-endns-${unique}'
 var eventHubName2 = '${project}-end-${unique}'
+
 var databaseName = '${project}-db-${unique}'
 var databaseTableName = '${project}-dbtbl-${unique}'
-
 var logAnalyticsName = '${project}-law-${unique}'
 var functionName = '${project}-func-${unique}'
 var virtualNetworkName = '${project}-vnet-${unique}'
-
 var privateLinkSubnetName = 'PrivateLinkSubnet'
 var functionSubnetName = 'FunctionSubnet'
-
 var iotHubName = '${project}-IoThub-${unique}'
 var storageAccountName = '${project}stg${unique}'
 var funcStorageAccountName = '${project}fstg${unique}'
@@ -299,12 +298,27 @@ module eventHub 'modules/eventhub.bicep' = {
     eventHubsNamespacePlan: eventHubsNamespacePlan
     eventHubsNamespaceTier: eventHubsNamespaceTier
     eventHubName: eventHubName
-    eventHubName2: eventHubName2
     retentionInDays: retentionInDays
     partitionCount: partitionCount
     location: location
   }
 }
+
+// Creates a second Event Hubs namespace and associated event hub
+module eventHub2 'modules/eventhub.bicep' = {
+  name: 'eventHub2'
+  params: {
+    eventHubsNamespaceName: eventHubsNamespaceName2
+    eventHubsNamespaceCapacity: eventHubsNamespaceCapacity
+    eventHubsNamespacePlan: eventHubsNamespacePlan
+    eventHubsNamespaceTier: eventHubsNamespaceTier
+    eventHubName: eventHubName2
+    retentionInDays: retentionInDays
+    partitionCount: partitionCount
+    location: location
+  }
+}
+
 
 // Creates Azure Data Explorer cluster and database
 module dataExplorerCluster 'modules/dataexplorercluster.bicep' = {
@@ -332,7 +346,7 @@ module roleAssignment 'modules/roleassignment.bicep' = {
     digitalTwinsIdentityTenantId: digitalTwins.outputs.digitalTwinsIdentityTenantId
     eventHubsNamespaceName: eventHubsNamespaceName
     eventHubName: eventHubName
-    eventHubsDataNamespaceName: eventHubsNamespaceName
+    eventHubsDataNamespaceName: eventHubsNamespaceName2
     eventHubDataName: eventHubName2
     adxClusterName: adxClusterName
     databaseName: databaseName
