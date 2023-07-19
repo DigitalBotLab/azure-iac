@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.19.5.34762",
-      "templateHash": "13520936379573325074"
+      "templateHash": "3947177575199778248"
     }
   },
   "parameters": {
@@ -18,7 +18,7 @@
     },
     "eventHubsNamespacePlan": {
       "type": "string",
-      "defaultValue": "Standard",
+      "defaultValue": "Basic",
       "metadata": {
         "description": "Event Hubs namespace SKU option"
       },
@@ -30,7 +30,7 @@
     },
     "eventHubsNamespaceTier": {
       "type": "string",
-      "defaultValue": "Standard",
+      "defaultValue": "Basic",
       "metadata": {
         "description": "Event Hubs namespace SKU billing tier"
       },

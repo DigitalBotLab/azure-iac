@@ -7,14 +7,14 @@ param project string = 'prj'
   'Standard'
 ])
 @description('Event Hubs namespace SKU option')
-param eventHubsNamespacePlan string = 'Standard'
+param eventHubsNamespacePlan string = 'Basic'
 
 @allowed([
   'Basic'
   'Standard'
 ])
 @description('Event Hubs namespace SKU billing tier')
-param eventHubsNamespaceTier string = 'Standard'
+param eventHubsNamespaceTier string = 'Basic'
 
 @description('Event Hubs throughput units')
 param eventHubsNamespaceCapacity int = 1
