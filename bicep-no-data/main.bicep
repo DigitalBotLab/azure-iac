@@ -61,7 +61,7 @@ var unique = substring(uniqueString(resourceGroup().id), 0, 4)
 var digitalTwinsName = '${project}-twins-${unique}'
 var eventHubsNamespaceName = '${project}-twinns-${unique}'
 var eventHubName = '${project}-twinhub-${unique}'
-
+var eventGridTopicName = '${project}-egtopic-${unique}'
 var logAnalyticsName = '${project}-law-${unique}'
 var functionName = '${project}-func-${unique}'
 var iotHubName = '${project}-IoThub-${unique}'
@@ -170,12 +170,14 @@ module digitalTwins 'modules/digitaltwins.bicep' = {
     location: location
     eventHubName: eventHubName
     eventHubNamespace: eventHubsNamespaceName
+    eventGridTopicName: eventGridTopicName
+    eventGridTopicId : eventGridTopic.outputs.eventGridTopicId
   }
   dependsOn: [
     eventHub
+    eventGridTopic
   ]
 }
-
 
 module functionApp 'modules/function-app.bicep' = {
   name: 'functionApp'
@@ -212,6 +214,14 @@ module eventHub 'modules/eventhub.bicep' = {
     eventHubName: eventHubName
     retentionInDays: retentionInDays
     partitionCount: partitionCount
+    location: location
+  }
+}
+
+module eventGridTopic 'modules/eventgridtopic.bicep' = {
+  name: eventGridTopicName
+  params: {
+    eventGridTopicName: eventGridTopicName
     location: location
   }
 }
