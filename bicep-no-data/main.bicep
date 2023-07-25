@@ -47,20 +47,15 @@ param principalType string = 'User'
 @description('Location of to be created resources')
 param location string
 
-@description('The SKU to use for the IoT Hub.')
-param skuName string = 'S1'
-
-@description('The number of IoT Hub units.')
-param skuUnits int = 1
-
-@description('Partitions used for the event stream.')
-param d2cPartitions int = 4
 
 var unique = substring(uniqueString(resourceGroup().id), 0, 4)
 
 var digitalTwinsName = '${project}-twins-${unique}'
 var eventHubsNamespaceName = '${project}-twinns-${unique}'
 var eventHubName = '${project}-twinhub-${unique}'
+var eventGridTopicName = '${project}-egtopic-${unique}'
+var functionSubscriptionName = '${project}-funcsub-${unique}'
+
 
 var logAnalyticsName = '${project}-law-${unique}'
 var functionName = '${project}-func-${unique}'
@@ -68,99 +63,18 @@ var iotHubName = '${project}-IoThub-${unique}'
 var storageAccountName = '${project}stg${unique}'
 var funcStorageAccountName = '${project}fstg${unique}'
 var storageEndpoint = '${project}stgep-${unique}'
-var storageContainerName = 'results'
 
 
-resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
-  name: storageAccountName
-  location: location
-  sku: {
-    name: 'Standard_LRS'
+module iotHub 'modules/iothub.bicep' = {
+  name: 'iotHub'
+  params: {
+    location: location
+    iotHubName: iotHubName
+    storageEndpoint: storageEndpoint
+    storageAccountName: storageAccountName
   }
-  kind: 'Storage'
 }
 
-resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-08-01' = {
-  name: '${storageAccountName}/default/${storageContainerName}'
-  properties: {
-    publicAccess: 'None'
-  }
-  dependsOn: [
-    storageAccount
-  ]
-}
-
-resource IoTHub 'Microsoft.Devices/IotHubs@2021-07-02' = {
-  name: iotHubName
-  location: location
-  sku: {
-    name: skuName
-    capacity: skuUnits
-  }
-  identity: {
-    type: 'SystemAssigned'
-  }
-  properties: {
-    eventHubEndpoints: {
-      events: {
-        retentionTimeInDays: 1
-        partitionCount: d2cPartitions
-      }
-    }
-    routing: {
-      endpoints: {
-        storageContainers: [
-          {
-            connectionString: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
-            containerName: storageContainerName
-            fileNameFormat: '{iothub}/{partition}/{YYYY}/{MM}/{DD}/{HH}/{mm}'
-            batchFrequencyInSeconds: 100
-            maxChunkSizeInBytes: 104857600
-            encoding: 'JSON'
-            name: storageEndpoint
-          }
-        ]
-      }
-      routes: [
-        {
-          name: 'StorageRoute'
-          source: 'DeviceMessages'
-          condition: 'level="storage"'
-          endpointNames: [
-            storageEndpoint
-          ]
-          isEnabled: true
-        }
-      ]
-      fallbackRoute: {
-        name: '$fallback'
-        source: 'DeviceMessages'
-        condition: 'true'
-        endpointNames: [
-          'events'
-        ]
-        isEnabled: true
-      }
-    }
-    messagingEndpoints: {
-      fileNotifications: {
-        lockDurationAsIso8601: 'PT1M'
-        ttlAsIso8601: 'PT1H'
-        maxDeliveryCount: 10
-      }
-    }
-    enableFileUploadNotifications: false
-    cloudToDevice: {
-      maxDeliveryCount: 10
-      defaultTtlAsIso8601: 'PT1H'
-      feedback: {
-        lockDurationAsIso8601: 'PT1M'
-        ttlAsIso8601: 'PT1H'
-        maxDeliveryCount: 10
-      }
-    }
-  }
-}
 
 // Creates Digital Twins resource
 module digitalTwins 'modules/digitaltwins.bicep' = {
@@ -170,12 +84,13 @@ module digitalTwins 'modules/digitaltwins.bicep' = {
     location: location
     eventHubName: eventHubName
     eventHubNamespace: eventHubsNamespaceName
+    eventGridTopicName: eventGridTopicName
   }
   dependsOn: [
     eventHub
+    eventGridTopic
   ]
 }
-
 
 module functionApp 'modules/function-app.bicep' = {
   name: 'functionApp'
@@ -215,6 +130,37 @@ module eventHub 'modules/eventhub.bicep' = {
     location: location
   }
 }
+
+module eventGridTopic 'modules/eventgridtopic.bicep' = {
+  name: eventGridTopicName
+  params: {
+    eventGridTopicName: eventGridTopicName
+    location: location
+  }
+}
+
+
+// resource functionSubscription 'Microsoft.EventGrid/eventSubscriptions@2023-06-01-preview' = {
+//   name: functionSubscriptionName
+//   properties: {
+//     destination: {
+//       endpointType: 'AzureFunction'
+//       properties: {
+//         deliveryAttributeMappings: [
+//           {
+//             name: 'string'
+//             type: 'Static'
+//             // For remaining properties, see DeliveryAttributeMapping objects
+//           }
+//         ]
+//         maxEventsPerBatch: 1
+//         preferredBatchSizeInKilobytes: 16
+//         resourceId: functionApp.outputs.id
+//       }
+//     }
+//   }
+// }
+
 
 //Assigns roles to resources
 module roleAssignment 'modules/roleassignment.bicep' = {
