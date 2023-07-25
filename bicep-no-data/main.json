@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.19.5.34762",
-      "templateHash": "3947177575199778248"
+      "templateHash": "15818854898131210465"
     }
   },
   "parameters": {
@@ -91,27 +91,6 @@
         "uksouth",
         "eastus2"
       ]
-    },
-    "skuName": {
-      "type": "string",
-      "defaultValue": "S1",
-      "metadata": {
-        "description": "The SKU to use for the IoT Hub."
-      }
-    },
-    "skuUnits": {
-      "type": "int",
-      "defaultValue": 1,
-      "metadata": {
-        "description": "The number of IoT Hub units."
-      }
-    },
-    "d2cPartitions": {
-      "type": "int",
-      "defaultValue": 4,
-      "metadata": {
-        "description": "Partitions used for the event stream."
-      }
     }
   },
   "variables": {
@@ -119,111 +98,187 @@
     "digitalTwinsName": "[format('{0}-twins-{1}', parameters('project'), variables('unique'))]",
     "eventHubsNamespaceName": "[format('{0}-twinns-{1}', parameters('project'), variables('unique'))]",
     "eventHubName": "[format('{0}-twinhub-{1}', parameters('project'), variables('unique'))]",
+    "eventGridTopicName": "[format('{0}-egtopic-{1}', parameters('project'), variables('unique'))]",
     "logAnalyticsName": "[format('{0}-law-{1}', parameters('project'), variables('unique'))]",
     "functionName": "[format('{0}-func-{1}', parameters('project'), variables('unique'))]",
     "iotHubName": "[format('{0}-IoThub-{1}', parameters('project'), variables('unique'))]",
     "storageAccountName": "[format('{0}stg{1}', parameters('project'), variables('unique'))]",
     "funcStorageAccountName": "[format('{0}fstg{1}', parameters('project'), variables('unique'))]",
-    "storageEndpoint": "[format('{0}stgep-{1}', parameters('project'), variables('unique'))]",
-    "storageContainerName": "results"
+    "storageEndpoint": "[format('{0}stgep-{1}', parameters('project'), variables('unique'))]"
   },
   "resources": [
     {
-      "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "2021-08-01",
-      "name": "[variables('storageAccountName')]",
-      "location": "[parameters('location')]",
-      "sku": {
-        "name": "Standard_LRS"
-      },
-      "kind": "Storage"
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-      "apiVersion": "2021-08-01",
-      "name": "[format('{0}/default/{1}', variables('storageAccountName'), variables('storageContainerName'))]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "iotHub",
       "properties": {
-        "publicAccess": "None"
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
-      ]
-    },
-    {
-      "type": "Microsoft.Devices/IotHubs",
-      "apiVersion": "2021-07-02",
-      "name": "[variables('iotHubName')]",
-      "location": "[parameters('location')]",
-      "sku": {
-        "name": "[parameters('skuName')]",
-        "capacity": "[parameters('skuUnits')]"
-      },
-      "identity": {
-        "type": "SystemAssigned"
-      },
-      "properties": {
-        "eventHubEndpoints": {
-          "events": {
-            "retentionTimeInDays": 1,
-            "partitionCount": "[parameters('d2cPartitions')]"
-          }
+        "expressionEvaluationOptions": {
+          "scope": "inner"
         },
-        "routing": {
-          "endpoints": {
-            "storageContainers": [
-              {
-                "connectionString": "[format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', variables('storageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2021-08-01').keys[0].value)]",
-                "containerName": "[variables('storageContainerName')]",
-                "fileNameFormat": "{iothub}/{partition}/{YYYY}/{MM}/{DD}/{HH}/{mm}",
-                "batchFrequencyInSeconds": 100,
-                "maxChunkSizeInBytes": 104857600,
-                "encoding": "JSON",
-                "name": "[variables('storageEndpoint')]"
-              }
-            ]
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
           },
-          "routes": [
-            {
-              "name": "StorageRoute",
-              "source": "DeviceMessages",
-              "condition": "level=\"storage\"",
-              "endpointNames": [
-                "[variables('storageEndpoint')]"
-              ],
-              "isEnabled": true
+          "iotHubName": {
+            "value": "[variables('iotHubName')]"
+          },
+          "storageEndpoint": {
+            "value": "[variables('storageEndpoint')]"
+          },
+          "storageAccountName": {
+            "value": "[variables('storageAccountName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.19.5.34762",
+              "templateHash": "14715571006024827002"
             }
-          ],
-          "fallbackRoute": {
-            "name": "$fallback",
-            "source": "DeviceMessages",
-            "condition": "true",
-            "endpointNames": [
-              "events"
-            ],
-            "isEnabled": true
-          }
-        },
-        "messagingEndpoints": {
-          "fileNotifications": {
-            "lockDurationAsIso8601": "PT1M",
-            "ttlAsIso8601": "PT1H",
-            "maxDeliveryCount": 10
-          }
-        },
-        "enableFileUploadNotifications": false,
-        "cloudToDevice": {
-          "maxDeliveryCount": 10,
-          "defaultTtlAsIso8601": "PT1H",
-          "feedback": {
-            "lockDurationAsIso8601": "PT1M",
-            "ttlAsIso8601": "PT1H",
-            "maxDeliveryCount": 10
-          }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "skuName": {
+              "type": "string",
+              "defaultValue": "S1",
+              "metadata": {
+                "description": "The SKU to use for the IoT Hub."
+              }
+            },
+            "skuUnits": {
+              "type": "int",
+              "defaultValue": 1,
+              "metadata": {
+                "description": "The number of IoT Hub units."
+              }
+            },
+            "iotHubName": {
+              "type": "string"
+            },
+            "storageAccountName": {
+              "type": "string"
+            },
+            "storageEndpoint": {
+              "type": "string"
+            },
+            "d2cPartitions": {
+              "type": "int",
+              "defaultValue": 4,
+              "metadata": {
+                "description": "Partitions used for the event stream."
+              }
+            }
+          },
+          "variables": {
+            "storageContainerName": "results"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Storage/storageAccounts",
+              "apiVersion": "2021-08-01",
+              "name": "[parameters('storageAccountName')]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "Standard_LRS"
+              },
+              "kind": "Storage"
+            },
+            {
+              "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+              "apiVersion": "2021-08-01",
+              "name": "[format('{0}/default/{1}', parameters('storageAccountName'), variables('storageContainerName'))]",
+              "properties": {
+                "publicAccess": "None"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Devices/IotHubs",
+              "apiVersion": "2021-07-02",
+              "name": "[parameters('iotHubName')]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "[parameters('skuName')]",
+                "capacity": "[parameters('skuUnits')]"
+              },
+              "identity": {
+                "type": "SystemAssigned"
+              },
+              "properties": {
+                "eventHubEndpoints": {
+                  "events": {
+                    "retentionTimeInDays": 1,
+                    "partitionCount": "[parameters('d2cPartitions')]"
+                  }
+                },
+                "routing": {
+                  "endpoints": {
+                    "storageContainers": [
+                      {
+                        "connectionString": "[format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', parameters('storageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2021-08-01').keys[0].value)]",
+                        "containerName": "[variables('storageContainerName')]",
+                        "fileNameFormat": "{iothub}/{partition}/{YYYY}/{MM}/{DD}/{HH}/{mm}",
+                        "batchFrequencyInSeconds": 100,
+                        "maxChunkSizeInBytes": 104857600,
+                        "encoding": "JSON",
+                        "name": "[parameters('storageEndpoint')]"
+                      }
+                    ]
+                  },
+                  "routes": [
+                    {
+                      "name": "StorageRoute",
+                      "source": "DeviceMessages",
+                      "condition": "level=\"storage\"",
+                      "endpointNames": [
+                        "[parameters('storageEndpoint')]"
+                      ],
+                      "isEnabled": true
+                    }
+                  ],
+                  "fallbackRoute": {
+                    "name": "$fallback",
+                    "source": "DeviceMessages",
+                    "condition": "true",
+                    "endpointNames": [
+                      "events"
+                    ],
+                    "isEnabled": true
+                  }
+                },
+                "messagingEndpoints": {
+                  "fileNotifications": {
+                    "lockDurationAsIso8601": "PT1M",
+                    "ttlAsIso8601": "PT1H",
+                    "maxDeliveryCount": 10
+                  }
+                },
+                "enableFileUploadNotifications": false,
+                "cloudToDevice": {
+                  "maxDeliveryCount": 10,
+                  "defaultTtlAsIso8601": "PT1H",
+                  "feedback": {
+                    "lockDurationAsIso8601": "PT1M",
+                    "ttlAsIso8601": "PT1H",
+                    "maxDeliveryCount": 10
+                  }
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+              ]
+            }
+          ]
         }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
-      ]
+      }
     },
     {
       "type": "Microsoft.Resources/deployments",
@@ -246,6 +301,9 @@
           },
           "eventHubNamespace": {
             "value": "[variables('eventHubsNamespaceName')]"
+          },
+          "eventGridTopicName": {
+            "value": "[variables('eventGridTopicName')]"
           }
         },
         "template": {
@@ -255,7 +313,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.19.5.34762",
-              "templateHash": "17236641791367571237"
+              "templateHash": "13728600393041154772"
             }
           },
           "parameters": {
@@ -295,6 +353,12 @@
               "metadata": {
                 "description": "Name of existing Event Hub to connect and Endpoint to"
               }
+            },
+            "eventGridTopicName": {
+              "type": "string",
+              "metadata": {
+                "description": "Name of existing Event Grid Topic to connect and Endpoint to"
+              }
             }
           },
           "resources": [
@@ -310,12 +374,26 @@
             {
               "type": "Microsoft.DigitalTwins/digitalTwinsInstances/endpoints",
               "apiVersion": "2022-10-31",
-              "name": "[format('{0}/{1}', parameters('digitalTwinsName'), 'Endpoint01')]",
+              "name": "[format('{0}/{1}', parameters('digitalTwinsName'), 'ClientEndpoint01')]",
               "properties": {
                 "authenticationType": "IdentityBased",
                 "endpointType": "EventHub",
                 "endpointUri": "[format('sb://{0}.servicebus.windows.net', parameters('eventHubNamespace'))]",
                 "entityPath": "[parameters('eventHubName')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.DigitalTwins/digitalTwinsInstances', parameters('digitalTwinsName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.DigitalTwins/digitalTwinsInstances/endpoints",
+              "apiVersion": "2022-10-31",
+              "name": "[format('{0}/{1}', parameters('digitalTwinsName'), 'TelemetryEndpoint01')]",
+              "properties": {
+                "authenticationType": "IdentityBased",
+                "endpointType": "EventGrid",
+                "TopicEndpoint": "[parameters('eventGridTopicName')]",
+                "accessKey1": "[listKeys(resourceId('Microsoft.EventGrid/topics', parameters('eventGridTopicName')), '2020-06-01').key1]"
               },
               "dependsOn": [
                 "[resourceId('Microsoft.DigitalTwins/digitalTwinsInstances', parameters('digitalTwinsName'))]"
@@ -343,6 +421,7 @@
         }
       },
       "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', variables('eventGridTopicName'))]",
         "[resourceId('Microsoft.Resources/deployments', 'eventHub')]"
       ]
     },
@@ -792,6 +871,66 @@
               ]
             }
           ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "[variables('eventGridTopicName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "eventGridTopicName": {
+            "value": "[variables('eventGridTopicName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.19.5.34762",
+              "templateHash": "14558011811676559762"
+            }
+          },
+          "parameters": {
+            "eventGridTopicName": {
+              "type": "string",
+              "defaultValue": "[format('topic-{0}', uniqueString(resourceGroup().id))]",
+              "metadata": {
+                "description": "The name of the Event Grid custom topic."
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "The location in which the Event Grid should be deployed."
+              }
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.EventGrid/topics",
+              "apiVersion": "2020-06-01",
+              "name": "[parameters('eventGridTopicName')]",
+              "location": "[parameters('location')]"
+            }
+          ],
+          "outputs": {
+            "eventGridTopicId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.EventGrid/topics', parameters('eventGridTopicName'))]"
+            }
+          }
         }
       }
     },

@@ -140,4 +140,4 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-03
 
 output eventFunction string = '${functionApp.id}/functions/ProcessHubToDTEvents'
 output functionIdentityPrincipalId string = functionApp.identity.principalId
-
+output id string = functionApp.id
