@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.19.5.34762",
-      "templateHash": "15818854898131210465"
+      "templateHash": "11875865891080920532"
     }
   },
   "parameters": {
@@ -99,6 +99,7 @@
     "eventHubsNamespaceName": "[format('{0}-twinns-{1}', parameters('project'), variables('unique'))]",
     "eventHubName": "[format('{0}-twinhub-{1}', parameters('project'), variables('unique'))]",
     "eventGridTopicName": "[format('{0}-egtopic-{1}', parameters('project'), variables('unique'))]",
+    "functionSubscriptionName": "[format('{0}-funcsub-{1}', parameters('project'), variables('unique'))]",
     "logAnalyticsName": "[format('{0}-law-{1}', parameters('project'), variables('unique'))]",
     "functionName": "[format('{0}-func-{1}', parameters('project'), variables('unique'))]",
     "iotHubName": "[format('{0}-IoThub-{1}', parameters('project'), variables('unique'))]",
@@ -313,7 +314,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.19.5.34762",
-              "templateHash": "13728600393041154772"
+              "templateHash": "3861637767079131788"
             }
           },
           "parameters": {
@@ -390,9 +391,9 @@
               "apiVersion": "2022-10-31",
               "name": "[format('{0}/{1}', parameters('digitalTwinsName'), 'TelemetryEndpoint01')]",
               "properties": {
-                "authenticationType": "IdentityBased",
+                "authenticationType": "KeyBased",
                 "endpointType": "EventGrid",
-                "TopicEndpoint": "[parameters('eventGridTopicName')]",
+                "TopicEndpoint": "[reference(resourceId('Microsoft.EventGrid/topics', parameters('eventGridTopicName')), '2020-06-01').endpoint]",
                 "accessKey1": "[listKeys(resourceId('Microsoft.EventGrid/topics', parameters('eventGridTopicName')), '2020-06-01').key1]"
               },
               "dependsOn": [
@@ -458,7 +459,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.19.5.34762",
-              "templateHash": "7668324270810328492"
+              "templateHash": "15068698103432772067"
             }
           },
           "parameters": {
@@ -647,6 +648,10 @@
             "functionIdentityPrincipalId": {
               "type": "string",
               "value": "[reference(resourceId('Microsoft.Web/sites', parameters('functionAppName')), '2021-03-01', 'full').identity.principalId]"
+            },
+            "id": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"
             }
           }
         }

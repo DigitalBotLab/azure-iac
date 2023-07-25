@@ -62,9 +62,9 @@ resource twinEndpoint 'Microsoft.DigitalTwins/digitalTwinsInstances/endpoints@20
   name: 'TelemetryEndpoint01'
   parent: digitalTwins
   properties: {
-    authenticationType: 'IdentityBased'
+    authenticationType: 'KeyBased'
     endpointType: 'EventGrid'   
-    TopicEndpoint: eventGridTopicName
+    TopicEndpoint: eventGridTopic.properties.endpoint
     accessKey1: eventGridTopic.listKeys().key1
   }
 }
